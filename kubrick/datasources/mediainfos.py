@@ -13,7 +13,7 @@ class MediainfosDatasource(Datasource):
         if infos is None:
             return movie
 
-        movie['container'] = infos['type']
+        movie['container'] = infos['type'].strip()
 
         # Set the quality of the video depending on its definition:
         if infos.video[0].width < 1280:
