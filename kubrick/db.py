@@ -3,6 +3,7 @@ import gdbm
 
 from kubrick.movie import Movie
 
+
 class MoviesMetadata(object):
 
     """ A database used to store metadata about movies managed by kubrick.
