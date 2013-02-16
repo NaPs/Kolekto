@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+#coding=utf8
+
+
+import os
+import argparse
+
+import pkg_resources
+
+from kubrick.printer import printer
+from kubrick.exceptions import KubrickRuntimeError
+from kubrick.config import parse_config
+
+
+def find_root():
+    """ Find the root path of the Kubrick tree from the current working directory.
+
+    If function doesn't find a Kubrick tree, it returns the cwd.
+    :return: the path to the root directory of Kubrick tree.
+    """
+
+    cwd = os.getcwd()
+    while cwd != '/':
+        config = os.path.join(cwd, '.kub')
+        if os.path.exists(config):
+            return cwd
+        else:
+            cwd, _ = os.path.split(cwd)
+    else:
+        return os.getcwd()
+
+
+def main():
+    """ Binary entry-point.
+    """
+    aparser = argparse.ArgumentParser()
+    aparser.add_argument('-t', '--tree', default=find_root())
+    aparser.add_argument('-e', '--editor', default=os.environ.get('EDITOR', 'vim'))
+    aparser.add_argument('-d', '--debug', action='store_true', default=False)
+    aparser.add_argument('-V', '--verbose', action='store_true', default=False)
+    aparser_subs = aparser.add_subparsers(help='Kubrick commands')
+
+    # Register all the kubrick commands:
+    commands = {}
+    for entrypoint in pkg_resources.iter_entry_points(group='kubrick.commands'):
+        command_class = entrypoint.load()
+        commands[entrypoint.name] = command_class(entrypoint.name, aparser_subs)
+        commands[entrypoint.name].prepare()
+
+    # Parse the command line arguments:
+    args = aparser.parse_args()
+
+    # Configure the main printer:
+    printer.configure(verbose=args.verbose, debug=args.debug, editor=args.editor)
+
+    # Parse configuration:
+    try:
+        config = parse_config(os.path.join(args.tree, '.kub', 'config'))
+    except IOError as err:
+        if err.errno == 2:
+            config = None
+        else:
+            raise
+
+    # Execute the selected command:
+    printer.debug('Executing command {cmd}', cmd=args.command)
+    try:
+        args.command(args, config)
+    except KubrickRuntimeError as err:
+        printer.p('Error: {err}', err=err)
+    except KeyboardInterrupt:
+        printer.p('Interrupted by user.')
+
+if __name__ == '__main__':
+    main()

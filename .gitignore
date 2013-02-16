@@ -1,0 +1,11 @@
+*.swp
+docs/_build/*
+*.pyc
+test.py
+samples
+*.old
+dist/
+kubrick.egg-info
+tmp
+.ropeproject
+build
