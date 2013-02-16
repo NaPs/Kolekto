@@ -56,8 +56,8 @@ Look at the .kub directory created::
     2 directories, 2 files
 
 The ``config`` file is the config file of the tree (not a joke!), the
-metadata.db file is the berkley database storing metadata for each movie in the
-tree, and the movies directory is here to store movies itself.
+``metadata.db`` file is the berkley database storing metadata for each movie in
+the tree, and the movies directory is where to store movies itself.
 
 You can edit the config file using the following command::
 
@@ -114,7 +114,7 @@ You can show more informations about the movie::
     _tmdb_id: 45745
 
 Now reopen the config file (using ``kub config``), and add another view called
-"Example" with this pattern: '{genres}/{year}/{quality}/{title}.{ext}'::
+``"Example"`` with this pattern: ``'{genres}/{year}/{quality}/{title}.{ext}'``::
 
     view 'Example' {
         pattern = '{genres}/{year}/{quality}/{title}.{ext}'
@@ -155,7 +155,7 @@ You can use the ``--help`` option to see all available commands.
 Todo / Changelog
 ----------------
 
-See the TODO.rst and CHANGELOG.rst files
+See the ``TODO.rst`` and ``CHANGELOG.rst`` files
 
 
 Legal
