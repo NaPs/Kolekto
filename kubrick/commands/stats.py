@@ -1,0 +1,78 @@
+import os
+from datetime import timedelta
+from collections import defaultdict
+from itertools import islice
+
+from kubrick.commands import Command
+from kubrick.db import MoviesMetadata
+from kubrick.datasources import MovieDatasource
+from kubrick.printer import printer
+
+from fabulous.color import bold
+
+
+SUFFIXES = ('KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB')
+
+
+def humanize_filesize(value):
+    """ Return an humanized file size.
+    """
+
+    value = float(value)
+
+    if value == 1:
+        return '1 Byte'
+    elif value < 1024:
+        return '%d Bytes' % value
+    elif value < 1024:
+        return '%dB' % value
+
+    for i, s in enumerate(SUFFIXES):
+        unit = 1024 ** (i + 2)
+        if value < unit:
+            return '%.1f %s' % ((1024 * value / unit), s)
+    return '%.1f %s' % ((1024 * value / unit), s)
+
+
+def format_top(counter, top=3):
+    """ Format a top.
+    """
+    items = islice(reversed(sorted(counter.iteritems(), key=lambda x: x[1])), 0, top)
+    return u'; '.join(u'{g} ({nb})'.format(g=g, nb=nb) for g, nb in items)
+
+
+class Stats(Command):
+
+    """ Get stats about the movies collection.
+    """
+
+    help = 'get stats about the movie collection'
+
+    def run(self, args, config):
+        mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
+        mds = MovieDatasource(config.subsections('datasource'), args.tree)
+        total_runtime = 0
+        total_size = 0
+        count_by_genre = defaultdict(lambda: 0)
+        count_by_director = defaultdict(lambda: 0)
+        count_by_quality = defaultdict(lambda: 0)
+        count_by_container = defaultdict(lambda: 0)
+        for movie_hash, movie in mdb.itermovies():
+            movie_fullpath = os.path.join(args.tree, '.kub', 'movies', movie_hash)
+            movie = mds.attach(movie_hash, movie)
+            total_runtime += movie.get('runtime', 0)
+            total_size += os.path.getsize(movie_fullpath)
+            for genre in movie.get('genres', []):
+                count_by_genre[genre] += 1
+            for director in movie.get('directors', []):
+                count_by_director[director] += 1
+            count_by_quality[movie.get('quality', 'n/a')] += 1
+            count_by_container[movie.get('container', 'n/a')] += 1
+
+        printer.p(bold('Number of movies:'), mdb.count())
+        printer.p(bold('Total runtime:'), timedelta(seconds=total_runtime * 60))
+        printer.p(bold('Total size:'), humanize_filesize(total_size))
+        printer.p(bold('Genres top3:'), format_top(count_by_genre))
+        printer.p(bold('Director top3:'), format_top(count_by_director))
+        printer.p(bold('Quality:'), format_top(count_by_quality, None))
+        printer.p(bold('Container:'), format_top(count_by_container, None))
