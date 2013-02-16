@@ -1,5 +1,5 @@
 import json
-import anydbm
+import gdbm
 
 from kubrick.movie import Movie
 
@@ -9,7 +9,7 @@ class MoviesMetadata(object):
     """
 
     def __init__(self, filename):
-        self._db = anydbm.open(filename, 'c')
+        self._db = gdbm.open(filename, 'c')
 
     def get(self, movie_hash):
         """ Get information about a movie using its sha1.
@@ -43,7 +43,10 @@ class MoviesMetadata(object):
     def itermovieshash(self):
         """ Iterate over movies hash stored in the database.
         """
-        return self._db.iterkeys()
+        cur = self._db.firstkey()
+        while cur is not None:
+            yield cur
+            cur = self._db.nextkey(cur)
 
     def itermovies(self):
         """ Iterate over (hash, movie) couple stored in database.
