@@ -9,3 +9,4 @@ kubrick.egg-info
 tmp
 .ropeproject
 build
+debsource
