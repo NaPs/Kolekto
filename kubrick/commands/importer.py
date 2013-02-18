@@ -21,8 +21,9 @@ class Import(Command):
     help = 'import a movie'
 
     def prepare(self):
-        self.add_arg('file', nargs='+')
-        self.add_arg('--hardlink', action='store_true', default=False)
+        self.add_arg('file', nargs='+', help='Files to import (globbing allowed)')
+        self.add_arg('--hardlink', action='store_true', default=False,
+                     help='Create an hardlink instead of copying the file')
 
     def run(self, args, config):
         # Load the metadata database:
