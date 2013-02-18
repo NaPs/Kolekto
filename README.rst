@@ -29,6 +29,22 @@ The fastest and more common way to install Kubrick is using pip::
 Debian
 ~~~~~~
 
+If you use Debian Wheezy, you can also use the Tecknet repositories. Add theses
+lines in your ``/etc/apt/source.list`` file::
+
+    deb http://debian.tecknet.org/debian wheezy tecknet
+    deb-src http://debian.tecknet.org/debian wheezy tecknet
+
+Add the Tecknet repositories key in your keyring:
+
+    # wget http://debian.tecknet.org/debian/public.key -O - | apt-key add -
+
+Then, update and install the kubrick package::
+
+    # aptitude update
+    # aptitude install kubrick
+
+
 Tutorial
 --------
 
