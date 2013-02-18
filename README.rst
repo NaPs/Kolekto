@@ -57,7 +57,7 @@ Look at the .kub directory created::
 
 The ``config`` file is the config file of the tree (not a joke!), the
 ``metadata.db`` file is the berkley database storing metadata for each movie in
-the tree, and the movies directory is where to store movies itself.
+the tree, and the movies directory is where to store movies themselves.
 
 You can edit the config file using the following command::
 
