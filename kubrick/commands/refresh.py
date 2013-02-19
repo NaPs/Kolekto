@@ -15,7 +15,9 @@ class Refresh(Command):
     help = 'refresh metadata of movies'
 
     def prepare(self):
-        self.add_arg('movie_hash', nargs='?')
+        self.add_arg('movie_hash', nargs='?',
+                     help='Hash of the movie to refresh. If not specified, '
+                          'refresh all movies.')
 
     def run(self, args, config):
         mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
