@@ -89,6 +89,7 @@ class TmdbDatasource(Datasource):
                                'writers': [x['name'] for x in cast['crew'] if x['department'] == 'Writing'],
                                'cast': [x['name'] for x in cast['cast']],
                                'genres': [x['name'] for x in details['genres']],
+                               'countries': [x['name'] for x in details['production_countries']],
                                '_Datasource': self.name,
                                '_tmdb_id': tmdb_id})
             if details.get('release_date'):
