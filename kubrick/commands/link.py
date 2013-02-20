@@ -59,9 +59,16 @@ class Link(Command):
 
     help = 'create symlinks'
 
+    def prepare(self):
+        self.add_arg('--dry-run', '-d', action='store_true', default=False,
+                     help='Do not create or delete any link')
+
     def run(self, args, config):
         mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
+
+        if args.dry_run:
+            printer.p('Dry run: I will not create or delete any link')
 
         # Create the list of links that must exists on the fs:
         db_links = {}
@@ -96,7 +103,8 @@ class Link(Command):
         # Delete the old links:
         for filename, link in links_to_delete:
             printer.verbose('Deleting {file}', file=filename)
-            os.remove(os.path.join(args.tree, filename))
+            if not args.dry_run:
+                os.remove(os.path.join(args.tree, filename))
 
         # Create the new links:
         for filename, link in links_to_create:
@@ -109,4 +117,5 @@ class Link(Command):
                 if err.errno != 17:  # Ignore already existing directory error
                     raise
             printer.verbose('Creating link {file!r} to {link!r}', file=filename, link=link)
-            os.symlink(os.path.relpath(movie_link, dirname), fullname)
+            if not args.dry_run:
+                os.symlink(os.path.relpath(movie_link, dirname), fullname)
