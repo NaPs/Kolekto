@@ -99,3 +99,43 @@ class TmdbDatasource(Datasource):
             for alt in alternatives['titles']:
                 refreshed['title_%s' % alt['iso_3166_1'].lower()] = alt['title']
             return refreshed
+
+
+class TmdbProxyDatasourceSchema(DefaultDatasourceSchema):
+
+    base_url = Value(String())
+    max_results = Value(Integer(min=1), default=None)
+
+
+class TmdbProxyDatasource(Datasource):
+
+    config_schema = TmdbProxyDatasourceSchema()
+
+    def _get(self, uri, *args, **kwargs):
+        url = self.config.get('base_url').rstrip('/') + uri
+        for _ in xrange(3):
+            printer.debug('Requesting {url}', url=url)
+            response = requests.get(url, params=kwargs)
+            if not 200 <= response.status_code < 400 :
+                printer.debug('Got error ({http_err}), retrying in 3s...', http_err=response.status_code)
+                time.sleep(3)
+                continue
+            return json.loads(response.text)
+        else:
+            raise KubrickRuntimeError('Unable to get the URL')
+
+    def search(self, title):
+        results = self._get('/1/search', query=title)['movies']
+        if self.config.get('max_results') is not None:
+            results = results[:self.config.get('max_results')]
+        for result in results:
+            movie = Movie(result)
+            yield movie
+
+    def refresh(self, movie):
+        """ Try to refresh metadata of the movie through the datasource.
+        """
+        if '_tmdb_id' in movie:
+            tmdb_id = movie['_tmdb_id']
+            movie = self._get('/1/movie/%s' % tmdb_id)
+            return movie['movie']
