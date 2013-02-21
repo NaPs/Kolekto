@@ -21,7 +21,7 @@ app.config.update(REDIS_HOST=os.environ.get('KUBRICK_REDIS_HOST', 'localhost'),
                   REDIS_DB=int(os.environ.get('KUBRICK_REDIS_DB', 0)),
                   TMDB_API_KEY=os.environ['KUBRICK_TMDB_API_KEY'],
                   CACHE_TTL=int(os.environ.get('KUBRICK_CACHE_TTL', ONE_WEEK)),
-                  DEBUG=os.environ['KUBRICK_DEBUG'] == 'on')
+                  DEBUG=os.environ.get('KUBRICK_DEBUG') == 'on')
 
 redis_conn = redis.StrictRedis(host=app.config['REDIS_HOST'],
                                port=app.config['REDIS_PORT'],
