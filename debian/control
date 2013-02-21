@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 8),
 XS-Python-Version: >= 2.6
 Standards-Version: 3.9.1
 
-Package: kub
+Package: python-kubrick
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends},
@@ -20,7 +20,48 @@ Depends: ${misc:Depends},
          python-fabulous,
          python-requests,
 XB-Python-Version: ${python:Versions}
+Description: This package provide the common libraries of the Kubrick project
+ .
+ Features:
+ .
+ * Cool CLI interface (and maybe a web interface to browse collection later)
+ * Able to query The Movie Database to collect metadata about movies
+ * Able to get informations from files itself depending of the container
+   (title, quality, runtime...)
+ * As simple as possible: all movies are stored in a directory, a berkley
+   database store the metadata for each movie, and a bunch of symlink are
+   created depending of the patterns set in the config file ("by actors",
+   "by title"...)
+ * Easy to extend, really!
+
+Package: kub
+Architecture: all
+Depends: ${misc:Depends},
+         ${python:Depends},
+         python-kubrick
+XB-Python-Version: ${python:Versions}
 Description: This package provide the kub cli of the Kubrick project
+ .
+ Features:
+ .
+ * Cool CLI interface (and maybe a web interface to browse collection later)
+ * Able to query The Movie Database to collect metadata about movies
+ * Able to get informations from files itself depending of the container
+   (title, quality, runtime...)
+ * As simple as possible: all movies are stored in a directory, a berkley
+   database store the metadata for each movie, and a bunch of symlink are
+   created depending of the patterns set in the config file ("by actors",
+   "by title"...)
+ * Easy to extend, really!
+
+Package: kubrick-tmdb-proxy
+Architecture: all
+Depends: ${misc:Depends},
+         ${python:Depends},
+         python-kubrick,
+         python-flask,
+XB-Python-Version: ${python:Versions}
+Description: This package provide a proxy for the TMDB API, for kubrick
  .
  Features:
  .
