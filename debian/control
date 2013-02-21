@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 8),
 XS-Python-Version: >= 2.6
 Standards-Version: 3.9.1
 
-Package: kubrick
+Package: kub
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends},
@@ -20,7 +20,7 @@ Depends: ${misc:Depends},
          python-fabulous,
          python-requests,
 XB-Python-Version: ${python:Versions}
-Description:Kubrick is a really KISS movie catalog software.
+Description: This package provide the kub cli of the Kubrick project
  .
  Features:
  .
