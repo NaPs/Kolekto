@@ -39,10 +39,10 @@ Add the Tecknet repositories key in your keyring:
 
     # wget http://debian.tecknet.org/debian/public.key -O - | apt-key add -
 
-Then, update and install the kubrick package::
+Then, update and install the ``kub`` package::
 
     # aptitude update
-    # aptitude install kubrick
+    # aptitude install kub
 
 
 Tutorial
