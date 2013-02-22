@@ -80,7 +80,7 @@ class KubrickPrinter(object):
             self._print(*args, err=True, **kwargs)
 
     def verbose(self, *args, **kwargs):
-        if self._verbose:
+        if self._verbose or self._debug:
             self._print(*args, **kwargs)
 
     def p(self, *args, **kwargs):
