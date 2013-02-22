@@ -60,6 +60,7 @@ Depends: ${misc:Depends},
          ${python:Depends},
          python-kubrick,
          python-flask,
+         gunicorn (>= 0.14)
 XB-Python-Version: ${python:Versions}
 Description: This package provide a proxy for the TMDB API, for kubrick
  .
