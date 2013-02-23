@@ -15,6 +15,9 @@ from dotconf.schema.containers import Value
 from dotconf.schema.types import String, Integer
 
 
+requests_session = requests.Session()
+
+
 class TmdbDatasourceSchema(DefaultDatasourceSchema):
 
     api_key = Value(String())
@@ -34,7 +37,7 @@ class TmdbDatasource(Datasource):
     def _tmdb_search(self, title):
         ak = self.config.get('api_key')
         url = self.URL_SEARCH % dict(api_key=ak, query=requests.utils.quote(title.encode('utf8')))
-        response = requests.get(url.encode('utf8'))
+        response = requests_session.get(url.encode('utf8'))
         return json.loads(response.text)
 
     def _get(self, url, *args, **kwargs):
@@ -115,7 +118,7 @@ class TmdbProxyDatasource(Datasource):
         url = self.config.get('base_url').rstrip('/') + uri
         for _ in xrange(3):
             printer.debug('Requesting {url}', url=url)
-            response = requests.get(url, params=kwargs)
+            response = requests_session.get(url, params=kwargs)
             if not 200 <= response.status_code < 400 :
                 printer.debug('Got error ({http_err}), retrying in 3s...', http_err=response.status_code)
                 time.sleep(3)
