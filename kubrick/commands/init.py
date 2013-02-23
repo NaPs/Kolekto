@@ -9,6 +9,12 @@ view 'Titles' {
     pattern = '{title}.{ext}'
 }
 
+# By default, the tree will use the tmdb_proxy datasource which will allow
+# you to get data from TMDB without requiring an API key:
+datasource 'tmdb_proxy' {
+    base_url = 'http://api.kubrick-project.org/'
+}
+
 # Uncomment and enter your API key to enable the TMDB datasource:
 #datasource 'tmdb' {
 #    api_key = '<enter your tmdb api key>'
