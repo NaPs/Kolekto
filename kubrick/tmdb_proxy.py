@@ -26,13 +26,14 @@ app.config.update(REDIS_HOST=os.environ.get('KUBRICK_REDIS_HOST', 'localhost'),
 redis_conn = redis.StrictRedis(host=app.config['REDIS_HOST'],
                                port=app.config['REDIS_PORT'],
                                db=app.config['REDIS_DB'])
+requests_session = requests.Session()
 
 
 def get_on_tmdb(uri, **kwargs):
     """ Get a resource on TMDB.
     """
     kwargs['api_key'] = app.config['TMDB_API_KEY']
-    response = requests.get((TMDB_API_URL + uri).encode('utf8'), params=kwargs)
+    response = requests_session.get((TMDB_API_URL + uri).encode('utf8'), params=kwargs)
     return json.loads(response.text)
 
 
