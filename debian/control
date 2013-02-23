@@ -60,6 +60,7 @@ Depends: ${misc:Depends},
          ${python:Depends},
          python-kubrick,
          python-flask,
+         python-redis,
          gunicorn (>= 0.14)
 Suggests: redis-server
 XB-Python-Version: ${python:Versions}
