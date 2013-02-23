@@ -4,6 +4,8 @@ CONFIG = {
         #'KUBRICK_REDIS_HOST': 'localhost',
         #'KUBRICK_REDIS_PORT': '6379',
         #'KUBRICK_REDIS_DB': '0',
+        #'KUBRICK_REDIS_RO_HOST': '',
+        #'KUBRICK_REDIS_RO_PORT': '6379',
         'KUBRICK_TMDB_API_KEY': 'PUT API KEY HERE',
         #'KUBRICK_CACHE_TTL': '604800',
         #'KUBRICK_DEBUG': 'on',
