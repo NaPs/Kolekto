@@ -3,6 +3,8 @@ import os
 from kubrick.printer import printer
 from kubrick.commands import Command
 from kubrick.exceptions import KubrickRuntimeError
+from kubrick.db import MoviesMetadata
+
 
 DEFAULT_CONFIG = '''
 view 'Titles' {
@@ -47,3 +49,6 @@ class Init(Command):
         with open(os.path.join(args.tree, '.kub', 'config'), 'w') as fconfig:
             fconfig.write(DEFAULT_CONFIG)
         printer.p('Initialized empty Kubrick tree in {where}.', where=args.tree)
+
+        # Open the metadata db to create it automatically:
+        MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
