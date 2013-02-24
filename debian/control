@@ -17,7 +17,6 @@ Depends: ${misc:Depends},
          python-dotconf,
          python-kaa-metadata,
          python-progressbar,
-         python-fabulous,
          python-requests,
 XB-Python-Version: ${python:Versions}
 Description: This package provide the common libraries of the Kubrick project
