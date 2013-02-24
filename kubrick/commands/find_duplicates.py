@@ -1,11 +1,9 @@
 import os
 from collections import defaultdict
 
-from kubrick.printer import printer
+from kubrick.printer import printer, bold
 from kubrick.commands import Command
 from kubrick.db import MoviesMetadata
-
-from fabulous.color import bold
 
 
 class FindDuplicates(Command):

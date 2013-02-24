@@ -42,4 +42,4 @@ setup(name='kubrick',
                     'kubrick.datasources': ['tmdb = kubrick.datasources.tmdb:TmdbDatasource',
                                             'tmdb_proxy = kubrick.datasources.tmdb:TmdbProxyDatasource',
                                             'mediainfos = kubrick.datasources.mediainfos:MediainfosDatasource']},
-      install_requires=['dotconf', 'kaa-metadata', 'progressbar', 'fabulous', 'requests'])
+      install_requires=['dotconf', 'kaa-metadata', 'progressbar', 'requests'])

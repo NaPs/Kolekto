@@ -5,6 +5,18 @@ import tempfile
 import progressbar
 
 
+def bold(text):
+    """ Return bolded text.
+    """
+    return u'\x1b[1m%s\x1b[22m' % text
+
+
+def highlight_white(text):
+    """ Return text highlighted in white.
+    """
+    return u'\x1b[1;37;7m%s\x1b[22;27;39m' % text
+
+
 class ProgressContext(object):
 
     """ A context for progress bar allowing to use the with statement.

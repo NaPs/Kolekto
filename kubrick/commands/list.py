@@ -2,9 +2,7 @@ import os
 
 from kubrick.commands import Command
 from kubrick.db import MoviesMetadata
-from kubrick.printer import printer
-
-from fabulous.color import bold, highlight_white
+from kubrick.printer import printer, bold, highlight_white
 
 
 class List(Command):

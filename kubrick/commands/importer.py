@@ -4,13 +4,11 @@ from glob import glob
 from hashlib import sha1
 from tempfile import NamedTemporaryFile
 
-from kubrick.printer import printer
+from kubrick.printer import printer, bold
 from kubrick.commands import Command
 from kubrick.datasources import MovieDatasource
 from kubrick.movie import Movie
 from kubrick.db import MoviesMetadata
-
-from fabulous.color import bold
 
 
 class Import(Command):

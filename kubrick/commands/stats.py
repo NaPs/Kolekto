@@ -6,9 +6,7 @@ from itertools import islice
 from kubrick.commands import Command
 from kubrick.db import MoviesMetadata
 from kubrick.datasources import MovieDatasource
-from kubrick.printer import printer
-
-from fabulous.color import bold
+from kubrick.printer import printer, bold
 
 
 SUFFIXES = ('KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB')

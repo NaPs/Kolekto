@@ -3,9 +3,7 @@ import os
 from kubrick.commands import Command
 from kubrick.db import MoviesMetadata
 from kubrick.datasources import MovieDatasource
-from kubrick.printer import printer
-
-from fabulous.color import bold
+from kubrick.printer import printer, bold
 
 
 METADATA_SORTER_FIRST = ('title', 'year', 'directors', 'cast', 'writers',
