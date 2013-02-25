@@ -15,6 +15,7 @@ view 'Titles' {
 # you to get data from TMDB without requiring an API key:
 datasource 'tmdb_proxy' {
     base_url = 'http://api.kubrick-project.org/'
+    max_results = 2
 }
 
 # Uncomment and enter your API key to enable the TMDB datasource:
