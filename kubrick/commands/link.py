@@ -116,6 +116,6 @@ class Link(Command):
             except OSError as err:
                 if err.errno != 17:  # Ignore already existing directory error
                     raise
-            printer.verbose('Creating link {file!r} to {link!r}', file=filename, link=link)
+            printer.verbose('Link: {file!r} -> {link!r}', file=filename, link=link)
             if not args.dry_run:
                 os.symlink(os.path.relpath(movie_link, dirname), fullname)
