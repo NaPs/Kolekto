@@ -49,7 +49,7 @@ class Init(Command):
         # Write the default config:
         with open(os.path.join(args.tree, '.kub', 'config'), 'w') as fconfig:
             fconfig.write(DEFAULT_CONFIG)
-        printer.p('Initialized empty Kubrick tree in {where}.', where=args.tree)
+        printer.p('Initialized empty Kubrick tree in {where}.', where=os.path.abspath(args.tree))
 
         # Open the metadata db to create it automatically:
         MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
