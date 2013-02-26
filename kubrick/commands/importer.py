@@ -117,8 +117,6 @@ class Import(Command):
         mdb.save(movie_hash, movie)
         printer.debug('Movie {hash} saved to the database', hash=movie_hash)
 
-        return True
-
     def _search(self, mdb, query, filename):
         """ Search the movie using all available datasources and let the user
             select a result. Return the choosen datasource and produced movie dict.
