@@ -1,6 +1,9 @@
 Kolekto
 =======
 
+.. image:: https://raw.github.com/NaPs/Kolekto/master/.artworks/kolekto.png
+
+
 Kolekto is a really KISS movie catalog software.
 
 Features:
