@@ -1,9 +1,6 @@
 Kolekto
 =======
 
-.. image:: https://raw.github.com/NaPs/Kolekto/master/.arts/kolekto.png
-
-
 Kolekto is a really KISS movie catalog software.
 
 Features:
@@ -178,8 +175,6 @@ Legal
 -----
 
 Kolekto is released under MIT license, copyright 2013 Antoine Millet.
-
-The Kolekto face picture come from vectorportal.com.
 
 
 Contribute
