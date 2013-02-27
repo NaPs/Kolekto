@@ -1,4 +1,4 @@
-""" Kubrick configuration parsers.
+""" Kolekto configuration parsers.
 """
 
 from dotconf import Dotconf
@@ -6,7 +6,7 @@ from dotconf.schema.containers import Section, Value
 from dotconf.schema.types import String
 
 
-class ViewKubrickConfig(Section):
+class ViewKolektoConfig(Section):
 
     _meta = {'args': Value(String()),
              'unique': True,
@@ -15,7 +15,7 @@ class ViewKubrickConfig(Section):
     pattern = Value(String())
 
 
-class DatasourceKubrickConfig(Section):
+class DatasourceKolektoConfig(Section):
 
     _meta = {'args': Value(String()),
              'unique': True,
@@ -23,12 +23,12 @@ class DatasourceKubrickConfig(Section):
              'allow_unknown': True}
 
 
-class RootKubrickConfig(Section):
+class RootKolektoConfig(Section):
 
-    view = ViewKubrickConfig()
-    datasource = DatasourceKubrickConfig()
+    view = ViewKolektoConfig()
+    datasource = DatasourceKolektoConfig()
 
 
 def parse_config(filename):
-    conf = Dotconf.from_filename(filename, schema=RootKubrickConfig())
+    conf = Dotconf.from_filename(filename, schema=RootKolektoConfig())
     return conf.parse()

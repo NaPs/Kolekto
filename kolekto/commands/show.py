@@ -1,9 +1,9 @@
 import os
 
-from kubrick.commands import Command
-from kubrick.db import MoviesMetadata
-from kubrick.datasources import MovieDatasource
-from kubrick.printer import printer, bold
+from kolekto.commands import Command
+from kolekto.db import MoviesMetadata
+from kolekto.datasources import MovieDatasource
+from kolekto.printer import printer, bold
 
 
 METADATA_SORTER_FIRST = ('title', 'year', 'directors', 'cast', 'writers',
@@ -59,7 +59,7 @@ class Show(Command):
         self.add_arg('movie_hash')
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
+        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
 
         try:

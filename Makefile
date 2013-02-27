@@ -1,4 +1,4 @@
-# Kubrick makefile
+# Kolekto makefile
 
 deb_version		:= $(shell dpkg-parsechangelog | sed -ne "s/^Version: \(.*\)/\1/p")
 upstream_fullname		:= $(shell python setup.py --fullname)
@@ -11,7 +11,7 @@ sdist:
 	python setup.py sdist
 
 clean:
-	rm -Rf dist build kubrick.egg-info debsource
+	rm -Rf dist build kolekto.egg-info debsource
 
 debsource: sdist
 	rm -Rf ./debsource/ && mkdir -p ./debsource/

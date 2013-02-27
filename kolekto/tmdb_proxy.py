@@ -16,14 +16,14 @@ ONE_WEEK = 604800
 
 
 app = Flask(__name__)
-app.config.update(REDIS_HOST=os.environ.get('KUBRICK_REDIS_HOST', 'localhost'),
-                  REDIS_PORT=int(os.environ.get('KUBRICK_REDIS_PORT', 6379)),
-                  REDIS_DB=int(os.environ.get('KUBRICK_REDIS_DB', 0)),
-                  REDIS_RO_HOST=os.environ.get('KUBRICK_REDIS_RO_HOST', None),
-                  REDIS_RO_PORT=int(os.environ.get('KUBRICK_REDIS_RO_PORT', 6379)),
-                  TMDB_API_KEY=os.environ['KUBRICK_TMDB_API_KEY'],
-                  CACHE_TTL=int(os.environ.get('KUBRICK_CACHE_TTL', ONE_WEEK)),
-                  DEBUG=os.environ.get('KUBRICK_DEBUG') == 'on')
+app.config.update(REDIS_HOST=os.environ.get('KOLEKTO_REDIS_HOST', 'localhost'),
+                  REDIS_PORT=int(os.environ.get('KOLEKTO_REDIS_PORT', 6379)),
+                  REDIS_DB=int(os.environ.get('KOLEKTO_REDIS_DB', 0)),
+                  REDIS_RO_HOST=os.environ.get('KOLEKTO_REDIS_RO_HOST', None),
+                  REDIS_RO_PORT=int(os.environ.get('KOLEKTO_REDIS_RO_PORT', 6379)),
+                  TMDB_API_KEY=os.environ['KOLEKTO_TMDB_API_KEY'],
+                  CACHE_TTL=int(os.environ.get('KOLEKTO_CACHE_TTL', ONE_WEEK)),
+                  DEBUG=os.environ.get('KOLEKTO_DEBUG') == 'on')
 
 redis_conn = redis.StrictRedis(host=app.config['REDIS_HOST'],
                                port=app.config['REDIS_PORT'],

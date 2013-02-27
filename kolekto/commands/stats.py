@@ -3,10 +3,10 @@ from datetime import timedelta
 from collections import defaultdict
 from itertools import islice
 
-from kubrick.commands import Command
-from kubrick.db import MoviesMetadata
-from kubrick.datasources import MovieDatasource
-from kubrick.printer import printer, bold
+from kolekto.commands import Command
+from kolekto.db import MoviesMetadata
+from kolekto.datasources import MovieDatasource
+from kolekto.printer import printer, bold
 
 
 SUFFIXES = ('KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB')
@@ -47,7 +47,7 @@ class Stats(Command):
     help = 'get stats about the movie collection'
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
+        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
         total_runtime = 0
         total_size = 0
@@ -56,7 +56,7 @@ class Stats(Command):
         count_by_quality = defaultdict(lambda: 0)
         count_by_container = defaultdict(lambda: 0)
         for movie_hash, movie in mdb.itermovies():
-            movie_fullpath = os.path.join(args.tree, '.kub', 'movies', movie_hash)
+            movie_fullpath = os.path.join(args.tree, '.kolekto', 'movies', movie_hash)
             movie = mds.attach(movie_hash, movie)
             total_runtime += movie.get('runtime', 0)
             total_size += os.path.getsize(movie_fullpath)

@@ -1,9 +1,9 @@
 import os
 import json
 
-from kubrick.printer import printer
-from kubrick.commands import Command
-from kubrick.db import MoviesMetadata
+from kolekto.printer import printer
+from kolekto.commands import Command
+from kolekto.db import MoviesMetadata
 
 
 class Restore(Command):
@@ -17,7 +17,7 @@ class Restore(Command):
         self.add_arg('file', help='The json dump file to restore')
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
+        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
         with open(args.file) as fdump:
             dump = json.load(fdump)
         for movie in dump:

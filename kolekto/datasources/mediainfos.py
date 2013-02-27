@@ -1,6 +1,6 @@
 import os
 
-from kubrick.datasources import Datasource
+from kolekto.datasources import Datasource
 
 import kaa.metadata
 
@@ -8,7 +8,7 @@ import kaa.metadata
 class MediainfosDatasource(Datasource):
 
     def attach(self, movie_hash, movie):
-        filename = os.path.join(self.tree, '.kub', 'movies', movie_hash)
+        filename = os.path.join(self.tree, '.kolekto', 'movies', movie_hash)
         infos = kaa.metadata.parse(filename)
         if infos is None:
             return movie

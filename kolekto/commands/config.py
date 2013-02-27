@@ -1,7 +1,7 @@
 import os
 
-from kubrick.printer import printer
-from kubrick.commands import Command
+from kolekto.printer import printer
+from kolekto.commands import Command
 
 
 class Config(Command):
@@ -12,7 +12,7 @@ class Config(Command):
     help = 'edit the configuration file'
 
     def run(self, args, config):
-        config_fullname = os.path.join(args.tree, '.kub', 'config')
+        config_fullname = os.path.join(args.tree, '.kolekto', 'config')
         with open(config_fullname, 'r+') as fconfig:
             config = printer.edit(fconfig.read())
             fconfig.seek(0)

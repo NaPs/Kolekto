@@ -2,10 +2,10 @@ import os
 from string import Formatter
 from itertools import product, izip
 
-from kubrick.printer import printer
-from kubrick.commands import Command
-from kubrick.db import MoviesMetadata
-from kubrick.datasources import MovieDatasource
+from kolekto.printer import printer
+from kolekto.commands import Command
+from kolekto.db import MoviesMetadata
+from kolekto.datasources import MovieDatasource
 
 
 def format_all(format_string, env):
@@ -54,7 +54,7 @@ def walk_links(directory, prefix='', linkbase=None):
 
 class Link(Command):
 
-    """ Create links in the kubrick tree.
+    """ Create links in the kolekto tree.
     """
 
     help = 'create symlinks'
@@ -64,7 +64,7 @@ class Link(Command):
                      help='Do not create or delete any link')
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
+        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
 
         if args.dry_run:
@@ -87,7 +87,7 @@ class Link(Command):
         for view in config.subsections('view'):
             view_links = walk_links(os.path.join(args.tree, view.args[0]),
                                     prefix=view.args[0],
-                                    linkbase=os.path.join(args.tree, '.kub', 'movies'))
+                                    linkbase=os.path.join(args.tree, '.kolekto', 'movies'))
             fs_links.update(view_links)
 
         db_links = set(db_links.iteritems())
@@ -110,7 +110,7 @@ class Link(Command):
         for filename, link in links_to_create:
             fullname = os.path.join(args.tree, filename)
             dirname = os.path.dirname(fullname)
-            movie_link = os.path.join(args.tree, '.kub', 'movies', link)
+            movie_link = os.path.join(args.tree, '.kolekto', 'movies', link)
             try:
                 os.makedirs(dirname)
             except OSError as err:

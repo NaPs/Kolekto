@@ -7,21 +7,21 @@ import argparse
 
 import pkg_resources
 
-from kubrick.printer import printer
-from kubrick.exceptions import KubrickRuntimeError
-from kubrick.config import parse_config
+from kolekto.printer import printer
+from kolekto.exceptions import KolektoRuntimeError
+from kolekto.config import parse_config
 
 
 def find_root():
-    """ Find the root path of the Kubrick tree from the current working directory.
+    """ Find the root path of the Kolekto tree from the current working directory.
 
-    If function doesn't find a Kubrick tree, it returns the cwd.
-    :return: the path to the root directory of Kubrick tree.
+    If function doesn't find a Kolekto tree, it returns the cwd.
+    :return: the path to the root directory of Kolekto tree.
     """
 
     cwd = os.getcwd()
     while cwd != '/':
-        config = os.path.join(cwd, '.kub')
+        config = os.path.join(cwd, '.kolekto')
         if os.path.exists(config):
             return cwd
         else:
@@ -38,11 +38,11 @@ def main():
     aparser.add_argument('-e', '--editor', default=os.environ.get('EDITOR', 'vim'))
     aparser.add_argument('-d', '--debug', action='store_true', default=False)
     aparser.add_argument('-V', '--verbose', action='store_true', default=False)
-    aparser_subs = aparser.add_subparsers(help='Kubrick commands')
+    aparser_subs = aparser.add_subparsers(help='Kolekto commands')
 
-    # Register all the kubrick commands:
+    # Register all the kolekto commands:
     commands = {}
-    for entrypoint in pkg_resources.iter_entry_points(group='kubrick.commands'):
+    for entrypoint in pkg_resources.iter_entry_points(group='kolekto.commands'):
         command_class = entrypoint.load()
         commands[entrypoint.name] = command_class(entrypoint.name, aparser_subs)
         commands[entrypoint.name].prepare()
@@ -55,7 +55,7 @@ def main():
 
     # Parse configuration:
     try:
-        config = parse_config(os.path.join(args.tree, '.kub', 'config'))
+        config = parse_config(os.path.join(args.tree, '.kolekto', 'config'))
     except IOError as err:
         if err.errno == 2:
             config = None
@@ -66,7 +66,7 @@ def main():
     printer.debug('Executing command {cmd}', cmd=args.command)
     try:
         args.command(args, config)
-    except KubrickRuntimeError as err:
+    except KolektoRuntimeError as err:
         printer.p('Error: {err}', err=err)
     except KeyboardInterrupt:
         printer.p('Interrupted by user.')

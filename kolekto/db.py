@@ -1,12 +1,12 @@
 import json
 import gdbm
 
-from kubrick.movie import Movie
+from kolekto.movie import Movie
 
 
 class MoviesMetadata(object):
 
-    """ A database used to store metadata about movies managed by kubrick.
+    """ A database used to store metadata about movies managed by kolekto.
     """
 
     def __init__(self, filename):

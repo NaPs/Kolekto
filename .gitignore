@@ -5,7 +5,7 @@ test.py
 samples
 *.old
 dist/
-kubrick.egg-info
+kolekto.egg-info
 tmp
 .ropeproject
 build

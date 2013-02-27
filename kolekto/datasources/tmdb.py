@@ -1,4 +1,4 @@
-""" The moviedb database for Kubrick.
+""" The moviedb database for Kolekto.
 """
 
 import json
@@ -6,10 +6,10 @@ import requests
 import time
 from datetime import datetime
 
-from kubrick.printer import printer
-from kubrick.datasources import Datasource, DefaultDatasourceSchema
-from kubrick.movie import Movie
-from kubrick.exceptions import KubrickRuntimeError
+from kolekto.printer import printer
+from kolekto.datasources import Datasource, DefaultDatasourceSchema
+from kolekto.movie import Movie
+from kolekto.exceptions import KolektoRuntimeError
 
 from dotconf.schema.containers import Value
 from dotconf.schema.types import String, Integer
@@ -52,7 +52,7 @@ class TmdbDatasource(Datasource):
                 continue
             return json.loads(response.text)
         else:
-            raise KubrickRuntimeError('Unable to get the URL')
+            raise KolektoRuntimeError('Unable to get the URL')
 
     def _tmdb_get(self, movie_id):
         return self._get(self.URL_GET, id=movie_id)
@@ -125,7 +125,7 @@ class TmdbProxyDatasource(Datasource):
                 continue
             return json.loads(response.text)
         else:
-            raise KubrickRuntimeError('Unable to get the URL')
+            raise KolektoRuntimeError('Unable to get the URL')
 
     def search(self, title):
         results = self._get('/1/search', query=title)['movies']

@@ -1,10 +1,10 @@
-Kubrick
+Kolekto
 =======
 
-.. image:: https://raw.github.com/NaPs/Kubrick/master/.arts/kubrick.png
+.. image:: https://raw.github.com/NaPs/Kolekto/master/.arts/kolekto.png
 
 
-Kubrick is a really KISS movie catalog software.
+Kolekto is a really KISS movie catalog software.
 
 Features:
 
@@ -21,9 +21,9 @@ Features:
 Setup
 -----
 
-The fastest and more common way to install Kubrick is using pip::
+The fastest and more common way to install Kolekto is using pip::
 
-    pip install kubrick
+    pip install kolekto
 
 
 Debian
@@ -39,32 +39,32 @@ Add the Tecknet repositories key in your keyring:
 
     # wget http://debian.tecknet.org/debian/public.key -O - | apt-key add -
 
-Then, update and install the ``kub`` package::
+Then, update and install the ``kolekto`` package::
 
     # aptitude update
-    # aptitude install kub
+    # aptitude install kolekto
 
 
 Tutorial
 --------
 
-Create your Kubrick tree::
+Create your Kolekto tree::
 
-    $ mkdir /tmp/kubrick_test && cd /tmp/kubrick_test
-    $ kub init
-    Initialized empty Kubrick tree in /tmp/kubrick_test/
+    $ mkdir /tmp/kolekto_test && cd /tmp/kolekto_test
+    $ kolekto init
+    Initialized empty Kolekto tree in /tmp/kolekto_test/
 
 
 Check that the tree has been properly created::
 
-    $ kub list
+    $ kolekto list
 
 
-Look at the .kub directory created::
+Look at the .kolekto directory created::
 
     $ tree -a
     .
-    └── .kub
+    └── .kolekto
         ├── config
         ├── metadata.db
         └── movies
@@ -77,7 +77,7 @@ the tree, and the movies directory is where to store movies themselves.
 
 You can edit the config file using the following command::
 
-    $ kub config
+    $ kolekto config
 
 It will just launch your favorite editor.
 
@@ -87,7 +87,7 @@ it after a signup on themoviedb.org. I will come back to the views later.
 
 Now, import a movie::
 
-    $ kub import ~/Sintel.mkv
+    $ kolekto import ~/Sintel.mkv
     Title to search [Sintel]?
     Please choose the relevant movie for the file: Sintel.ogv
 
@@ -98,17 +98,17 @@ Now, import a movie::
     Choice [1-3]? 1
     Do you want to edit the movie metadata [y/N]
 
-    Copying movie in kubrick tree...
+    Copying movie in kolekto tree...
      100% [=====================================]  420.31 M/s | Time: 00:00:01
 
 Check that your movie has been imported::
 
-    $ kub list
+    $ kolekto list
      3bb8414b6f70e5125e2092a3d96b483088a2283d  Sintel (2010) by Colin Levy
 
 You can show more informations about the movie::
 
-    $ kub show 3bb8414b6f70e5125e2092a3d96b483088a2283d
+    $ kolekto show 3bb8414b6f70e5125e2092a3d96b483088a2283d
     title: Sintel
     directors: Colin Levy
     year: 2010
@@ -129,7 +129,7 @@ You can show more informations about the movie::
     _datasource: tmdb
     _tmdb_id: 45745
 
-Now reopen the config file (using ``kub config``), and add another view called
+Now reopen the config file (using ``kolekto config``), and add another view called
 ``"Example"`` with this pattern: ``'{genres}/{year}/{quality}/{title}.{ext}'``::
 
     view 'Example' {
@@ -139,10 +139,10 @@ Now reopen the config file (using ``kub config``), and add another view called
 The following command will create symlinks for each view defined in your config
 file::
 
-    $ kub link
+    $ kolekto link
     Found 0 links to delete, 4 links to create
 
-Inspect your Kubrick tree for the newly created links::
+Inspect your Kolekto tree for the newly created links::
 
     $ tree
     .
@@ -150,17 +150,17 @@ Inspect your Kubrick tree for the newly created links::
     │   ├── Animation
     │   │   └── 2010
     │   │       └── 720p
-    │   │           └── Sintel.mkv -> ../../../../.kub/movies/3bb8414b6f70e5125e2092a3d96b483088a2283d
+    │   │           └── Sintel.mkv -> ../../../../.kolekto/movies/3bb8414b6f70e5125e2092a3d96b483088a2283d
     │   ├── Fantasy
     │   │   └── 2010
     │   │       └── 720p
-    │   │           └── Sintel.mkv -> ../../../../.kub/movies/3bb8414b6f70e5125e2092a3d96b483088a2283d
+    │   │           └── Sintel.mkv -> ../../../../.kolekto/movies/3bb8414b6f70e5125e2092a3d96b483088a2283d
     │   └── Short
     │       └── 2010
     │           └── 720p
-    │               └── Sintel.mkv -> ../../../..kub/movies/3bb8414b6f70e5125e2092a3d96b483088a2283d
+    │               └── Sintel.mkv -> ../../../..kolekto/movies/3bb8414b6f70e5125e2092a3d96b483088a2283d
     └── Titles
-        └── Sintel.mkv -> ../.kub/movies/3bb8414b6f70e5125e2092a3d96b483088a2283d
+        └── Sintel.mkv -> ../.kolekto/movies/3bb8414b6f70e5125e2092a3d96b483088a2283d
 
     11 directories, 4 files
 
@@ -177,17 +177,17 @@ See the ``TODO.rst`` and ``CHANGELOG.rst`` files
 Legal
 -----
 
-Kubrick is released under MIT license, copyright 2013 Antoine Millet.
+Kolekto is released under MIT license, copyright 2013 Antoine Millet.
 
-The Kubrick face picture come from vectorportal.com.
+The Kolekto face picture come from vectorportal.com.
 
 
 Contribute
 ----------
 
-You can send your pull-request for Kubrick through Github:
+You can send your pull-request for Kolekto through Github:
 
-    https://github.com/NaPs/Kubrick
+    https://github.com/NaPs/Kolekto
 
 I also accept well formatted git patches sent by email.
 

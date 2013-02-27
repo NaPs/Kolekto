@@ -1,10 +1,10 @@
 import os
 
-from kubrick.printer import printer
-from kubrick.commands import Command
-from kubrick.db import MoviesMetadata
-from kubrick.datasources import MovieDatasource
-from kubrick.commands.show import show
+from kolekto.printer import printer
+from kolekto.commands import Command
+from kolekto.db import MoviesMetadata
+from kolekto.datasources import MovieDatasource
+from kolekto.commands.show import show
 
 
 class Refresh(Command):
@@ -20,7 +20,7 @@ class Refresh(Command):
                           'refresh all movies.')
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
+        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
 
         if args.movie_hash is None: # Refresh all movies

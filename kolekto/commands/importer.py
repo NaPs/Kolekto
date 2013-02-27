@@ -4,16 +4,16 @@ from glob import glob
 from hashlib import sha1
 from tempfile import NamedTemporaryFile
 
-from kubrick.printer import printer, bold
-from kubrick.commands import Command
-from kubrick.datasources import MovieDatasource
-from kubrick.movie import Movie
-from kubrick.db import MoviesMetadata
+from kolekto.printer import printer, bold
+from kolekto.commands import Command
+from kolekto.datasources import MovieDatasource
+from kolekto.movie import Movie
+from kolekto.db import MoviesMetadata
 
 
 class Import(Command):
 
-    """ Import movies into the Kubrick tree.
+    """ Import movies into the Kolekto tree.
     """
 
     help = 'import a movie'
@@ -25,7 +25,7 @@ class Import(Command):
 
     def run(self, args, config):
         # Load the metadata database:
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
+        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
 
         # Load informations from db:
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
@@ -43,7 +43,7 @@ class Import(Command):
         filehash = sha1()
         with printer.progress(os.path.getsize(source_filename)) as update:
             with open(source_filename, 'rb') as fsource:
-                with NamedTemporaryFile(dir=os.path.join(tree, '.kub', 'movies'), delete=False) as fdestination:
+                with NamedTemporaryFile(dir=os.path.join(tree, '.kolekto', 'movies'), delete=False) as fdestination:
                     # Copy the source into the temporary destination:
                     while True:
                         buf = fsource.read(10 * 1024)
@@ -54,7 +54,7 @@ class Import(Command):
                         update(len(buf))
                     # Rename the file to its final name or raise an error if
                     # the file already exists:
-                    dest = os.path.join(tree, '.kub', 'movies', filehash.hexdigest())
+                    dest = os.path.join(tree, '.kolekto', 'movies', filehash.hexdigest())
                     if os.path.exists(dest):
                         raise IOError('This file already exists in tree (%s)' % filehash.hexdigest())
                     else:
@@ -73,7 +73,7 @@ class Import(Command):
                         filehash.update(buf)
                         update(len(buf))
                     # Hardlink the file or raise an error if the file already exists:
-                    dest = os.path.join(tree, '.kub', 'movies', filehash.hexdigest())
+                    dest = os.path.join(tree, '.kolekto', 'movies', filehash.hexdigest())
                     if os.path.exists(dest):
                         raise IOError('This file already exists in tree (%s)' % filehash.hexdigest())
                     else:
@@ -110,7 +110,7 @@ class Import(Command):
             printer.p('\nComputing movie sha1sum...')
             movie_hash = self._hardlink(args.tree, filename)
         else:
-            printer.p('\nCopying movie in kubrick tree...')
+            printer.p('\nCopying movie in kolekto tree...')
             movie_hash = self._copy(args.tree, filename)
         printer.p('')
 

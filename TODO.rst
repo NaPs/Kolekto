@@ -1,4 +1,4 @@
-Kubrick Todo list
+Kolekto Todo list
 =================
 
 - Web interface

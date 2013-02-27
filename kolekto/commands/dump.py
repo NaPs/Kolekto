@@ -1,9 +1,9 @@
 import os
 import json
 
-from kubrick.printer import printer
-from kubrick.commands import Command
-from kubrick.db import MoviesMetadata
+from kolekto.printer import printer
+from kolekto.commands import Command
+from kolekto.db import MoviesMetadata
 
 
 class Dump(Command):
@@ -14,6 +14,6 @@ class Dump(Command):
     help = 'dump database into json'
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kub', 'metadata.db'))
+        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
         dump = [{'hash': x, 'movie': y} for x, y in mdb.itermovies()]
         json.dump(dump, printer.output)

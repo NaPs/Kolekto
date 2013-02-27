@@ -38,7 +38,7 @@ class ProgressContext(object):
         self.pbar.finish()
 
 
-class KubrickPrinter(object):
+class KolektoPrinter(object):
 
     """ Handle print and user interactions.
     """
@@ -137,7 +137,7 @@ class KubrickPrinter(object):
         if self._editor is None:
             printer.p('Warning: no editor found, skipping edit')
             return text
-        with tempfile.NamedTemporaryFile(mode='w+', suffix='kubrick-edit') as ftmp:
+        with tempfile.NamedTemporaryFile(mode='w+', suffix='kolekto-edit') as ftmp:
             ftmp.write(text.encode('utf-8'))
             ftmp.flush()
             subprocess.Popen([self._editor, ftmp.name]).wait()
@@ -152,4 +152,4 @@ class KubrickPrinter(object):
             return ProgressContext(widgets=self.PROGRESS_WIDGETS, maxval=max)
 
 # Instanciate the default printer:
-printer = KubrickPrinter()
+printer = KolektoPrinter()

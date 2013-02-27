@@ -51,7 +51,7 @@ class MovieDatasource(object):
 
         self._datasources = []
         for datasource_config in datasources_config:
-            entrypoints = tuple(pkg_resources.iter_entry_points('kubrick.datasources', datasource_config.args[0]))
+            entrypoints = tuple(pkg_resources.iter_entry_points('kolekto.datasources', datasource_config.args[0]))
             if not entrypoints:
                 raise Exception('Bad datasource %r' % datasource_config.args[0])
             datasource_class = entrypoints[0].load()
