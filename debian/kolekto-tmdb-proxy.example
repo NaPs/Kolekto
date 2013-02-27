@@ -1,0 +1,20 @@
+CONFIG = {
+    'mode': 'wsgi',
+    'environment': {
+        #'KOLEKTO_REDIS_HOST': 'localhost',
+        #'KOLEKTO_REDIS_PORT': '6379',
+        #'KOLEKTO_REDIS_DB': '0',
+        #'KOLEKTO_REDIS_RO_HOST': '',
+        #'KOLEKTO_REDIS_RO_PORT': '6379',
+        'KOLEKTO_TMDB_API_KEY': 'PUT API KEY HERE',
+        #'KOLEKTO_CACHE_TTL': '604800',
+        #'KOLEKTO_DEBUG': 'on',
+    },
+    'args': (
+        '--bind=127.0.0.1:9002',
+        '--workers=2',
+        '--timeout=60',
+        '--worker-class=egg:gunicorn#gevent',
+        'kolekto.tmdb_proxy:app',
+    ),
+}

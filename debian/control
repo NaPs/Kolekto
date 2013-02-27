@@ -1,4 +1,4 @@
-Source: kubrick
+Source: kolekto
 Section: python
 Priority: optional
 Maintainer: Antoine Millet <antoine@inaps.org>
@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 8),
 XS-Python-Version: >= 2.6
 Standards-Version: 3.9.1
 
-Package: python-kubrick
+Package: python-kolekto
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends},
@@ -19,7 +19,7 @@ Depends: ${misc:Depends},
          python-progressbar,
          python-requests,
 XB-Python-Version: ${python:Versions}
-Description: This package provide the common libraries of the Kubrick project
+Description: This package provide the common libraries of the Kolekto project
  .
  Features:
  .
@@ -33,13 +33,13 @@ Description: This package provide the common libraries of the Kubrick project
    "by title"...)
  * Easy to extend, really!
 
-Package: kub
+Package: kolekto
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends},
-         python-kubrick
+         python-kolekto
 XB-Python-Version: ${python:Versions}
-Description: This package provide the kub cli of the Kubrick project
+Description: This package provide the cli of the Kolekto project
  .
  Features:
  .
@@ -53,17 +53,17 @@ Description: This package provide the kub cli of the Kubrick project
    "by title"...)
  * Easy to extend, really!
 
-Package: kubrick-tmdb-proxy
+Package: kolekto-tmdb-proxy
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends},
-         python-kubrick,
+         python-kolekto,
          python-flask,
          python-redis,
          gunicorn (>= 0.14)
 Suggests: redis-server
 XB-Python-Version: ${python:Versions}
-Description: This package provide a proxy for the TMDB API, for kubrick
+Description: This package provide a proxy for the TMDB API, for kolekto
  .
  Features:
  .
