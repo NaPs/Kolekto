@@ -1,5 +1,5 @@
-kolekto (0.1~dev-1) testing; urgency=low
+kolekto (1.0-1) testing; urgency=low
 
-  * Development release.
+  * Initial release.
 
- -- Antoine Millet <antoine@inaps.org>  Sun, 17 Feb 2013 19:09:29 +0100
+ -- Antoine Millet <antoine@inaps.org>  Thu, 28 Feb 2013 23:22:07 +0100
