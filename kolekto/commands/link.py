@@ -9,7 +9,8 @@ from kolekto.datasources import MovieDatasource
 
 
 def format_all(format_string, env):
-    """
+    """ Format the input string using each possible combination of lists
+        in the provided environment. Returns a list of formated strings.
     """
 
     formatter = Formatter()
