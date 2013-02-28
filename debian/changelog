@@ -1,3 +1,9 @@
+kolekto (1.1~dev-1) testing; urgency=low
+
+  * Development release.
+
+ -- Antoine Millet <antoine@inaps.org>  Thu, 28 Feb 2013 23:35:30 +0100
+
 kolekto (1.0-1) testing; urgency=low
 
   * Initial release.
