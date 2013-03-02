@@ -7,6 +7,7 @@ from tempfile import NamedTemporaryFile
 
 from kolekto.printer import printer, bold
 from kolekto.commands import Command
+from kolekto.commands.show import show
 from kolekto.datasources import MovieDatasource
 from kolekto.movie import Movie
 from kolekto.db import MoviesMetadata
@@ -35,6 +36,8 @@ class Import(Command):
                      help='Create an hardlink instead of copying the file')
         self.add_arg('--auto', '-a', action='store_true', default=False,
                      help='Automatically choose the most revelent movie.')
+        self.add_arg('--dont-show', dest='show', action='store_false', default=True,
+                     help='Show all informations about imported movie.')
 
     def run(self, args, config):
         # Load the metadata database:
@@ -121,6 +124,10 @@ class Import(Command):
 
         # Refresh the full data for the choosen movie:
         movie = mds.refresh(movie)
+
+        if args.show:
+            show(movie)
+            printer.p('')
 
         # Edit available data:
         if not args.auto and printer.ask('Do you want to edit the movie metadata', default=False):
