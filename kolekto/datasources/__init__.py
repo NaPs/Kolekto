@@ -27,7 +27,7 @@ class Datasource(object):
         self.tree = tree
         self.config = config
 
-    def search(self, title):
+    def search(self, title, year=None):
         """ Search for a movie title in database.
 
         :return: a list of Movie object
@@ -58,9 +58,9 @@ class MovieDatasource(object):
             datasource_config = datasource_class.config_schema.validate(datasource_config)
             self._datasources.append(datasource_class(entrypoints[0].name, tree, datasource_config))
 
-    def search(self, title):
+    def search(self, title, year=None):
         for datasource in self._datasources:
-            for movie in datasource.search(title):
+            for movie in datasource.search(title, year):
                 yield datasource, movie
 
     def refresh(self, movie):

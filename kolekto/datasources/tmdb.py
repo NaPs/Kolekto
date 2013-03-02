@@ -63,20 +63,36 @@ class TmdbDatasource(Datasource):
     def _tmdb_alt(self, movie_id):
         return self._get(self.URL_ALT, id=movie_id)
 
-    def search(self, title):
+    def search(self, title, year=None):
         results = self._tmdb_search(title)['results']
-        if self.config.get('max_results') is not None:
-            results = results[:self.config.get('max_results')]
+        max_results = self.config.get('max_results')
         for result in results:
-            details = self._tmdb_get(result['id'])
+            # Abort the search if max results is reached:
+            if max_results == 0:
+                break
+
+            # Parse the release year:
+            if result.get('release_date'):
+                movie_year = datetime.strptime(result['release_date'], '%Y-%m-%d').year
+            else:
+                movie_year = None
+
+            # Skip the movie if searched date is not the release date:
+            if year is not None and year != movie_year:
+                continue
+
+            # Else, format and yield the movie:
             cast = self._tmdb_cast(result['id'])
             movie = Movie({'title': result['original_title'],
                            'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
                            '_datasource': self.name,
                            '_tmdb_id': result['id']})
-            if details.get('release_date'):
-                movie['year'] = datetime.strptime(details['release_date'], '%Y-%m-%d').year
+            if movie_year:
+                movie['year'] = movie_year
             yield movie
+
+            if max_results is not None:
+                max_results -= 1
 
     def refresh(self, movie):
         """ Try to refresh metadata of the movie through the datasource.
@@ -127,13 +143,24 @@ class TmdbProxyDatasource(Datasource):
         else:
             raise KolektoRuntimeError('Unable to get the URL')
 
-    def search(self, title):
+    def search(self, title, year=None):
         results = self._get('/1/search', query=title)['movies']
-        if self.config.get('max_results') is not None:
-            results = results[:self.config.get('max_results')]
+        max_results = self.config.get('max_results')
+
         for result in results:
+            # Abort the search if max results is reached:
+            if max_results == 0:
+                break
+
+            # Skip the movie if searched date is not the release date:
+            if year is not None and year != result.get('year'):
+                continue
+
             movie = Movie(result)
             yield movie
+
+            if max_results is not None:
+                max_results -= 1
 
     def refresh(self, movie):
         """ Try to refresh metadata of the movie through the datasource.
