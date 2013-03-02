@@ -33,6 +33,8 @@ class Import(Command):
         self.add_arg('file', nargs='+', help='Files to import (globbing allowed)')
         self.add_arg('--hardlink', action='store_true', default=False,
                      help='Create an hardlink instead of copying the file')
+        self.add_arg('--auto', '-a', action='store_true', default=False,
+                     help='Automatically choose the most revelent movie.')
 
     def run(self, args, config):
         # Load the metadata database:
@@ -97,9 +99,16 @@ class Import(Command):
         title, ext = os.path.splitext(short_filename)
 
         year, title = clean_title(title)
+
+        # Disable the year filter if auto mode is disabled:
+        if not args.auto:
+            year = None
+
         while True:
-            title = printer.input(u'Title to search', default=title)
-            datasource, movie = self._search(mds, title, short_filename)
+            # Disable the title input if auto mode is enabled:
+            if not args.auto:
+                title = printer.input(u'Title to search', default=title)
+            datasource, movie = self._search(mds, title, short_filename, year, auto=args.auto)
             if datasource == 'manual':
                 movie = Movie()
             elif datasource == 'abort':
@@ -114,7 +123,7 @@ class Import(Command):
         movie = mds.refresh(movie)
 
         # Edit available data:
-        if printer.ask('Do you want to edit the movie metadata', default=False):
+        if not args.auto and printer.ask('Do you want to edit the movie metadata', default=False):
             movie = Movie(json.loads(printer.edit(json.dumps(movie, indent=True))))
 
         # Hardlink or copy the movie in the tree
@@ -129,12 +138,16 @@ class Import(Command):
         mdb.save(movie_hash, movie)
         printer.debug('Movie {hash} saved to the database', hash=movie_hash)
 
-    def _search(self, mdb, query, filename):
+    def _search(self, mdb, query, filename, year=None, auto=False):
         """ Search the movie using all available datasources and let the user
             select a result. Return the choosen datasource and produced movie dict.
+
+        If auto is enabled, directly returns the first movie found.
         """
         choices = []
-        for datasource, movie in mdb.search(query):
+        for datasource, movie in mdb.search(query, year):
+            if auto:
+                return datasource, movie
             if movie.get('directors'):
                 directors = ' by '
                 if len(movie['directors']) > 1:
