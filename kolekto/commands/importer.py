@@ -1,3 +1,4 @@
+import re
 import os
 import json
 from glob import glob
@@ -9,6 +10,16 @@ from kolekto.commands import Command
 from kolekto.datasources import MovieDatasource
 from kolekto.movie import Movie
 from kolekto.db import MoviesMetadata
+
+
+def clean_title(title):
+    match = re.match('(.+)((19|2\d)\d\d)', title)
+    if match is None:
+        return None, title
+    else:
+        title = match.group(1).replace('.', ' ').strip().title()
+        year = int(match.group(2))
+        return year, title
 
 
 class Import(Command):
@@ -85,6 +96,7 @@ class Import(Command):
         short_filename = os.path.basename(filename)
         title, ext = os.path.splitext(short_filename)
 
+        year, title = clean_title(title)
         while True:
             title = printer.input(u'Title to search', default=title)
             datasource, movie = self._search(mds, title, short_filename)
