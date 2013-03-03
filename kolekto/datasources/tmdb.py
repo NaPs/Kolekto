@@ -109,6 +109,7 @@ class TmdbDatasource(Datasource):
                                'cast': [x['name'] for x in cast['cast']],
                                'genres': [x['name'] for x in details['genres']],
                                'countries': [x['name'] for x in details['production_countries']],
+                               'tmdb_votes': int(round(details.get('vote_average', 0) * 0.5)),
                                '_Datasource': self.name,
                                '_tmdb_id': tmdb_id})
             if details.get('release_date'):
