@@ -38,6 +38,8 @@ class Import(Command):
                      help='Automatically choose the most revelent movie.')
         self.add_arg('--dont-show', dest='show', action='store_false', default=True,
                      help='Show all informations about imported movie.')
+        self.add_arg('--delete', action='store_true', default=False,
+                     help='Delete imported file after a successful import')
 
     def run(self, args, config):
         # Load the metadata database:
@@ -144,6 +146,10 @@ class Import(Command):
 
         mdb.save(movie_hash, movie)
         printer.debug('Movie {hash} saved to the database', hash=movie_hash)
+
+        if args.delete:
+            os.unlink(filename)
+            printer.debug('Deleted original file {filename}', filename=filename)
 
     def _search(self, mdb, query, filename, year=None, auto=False):
         """ Search the movie using all available datasources and let the user
