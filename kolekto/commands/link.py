@@ -19,7 +19,14 @@ def format_all(format_string, env):
     # Create a prepared environment with only used fields, all as list:
     prepared_env = []
     for field in fields:
-        field_values = env.get(field, [])
+        # Search for a movie attribute for each alternative field separated
+        # by a pipe sign:
+        for field_alt in (x.strip() for x in field.split('|')):
+            field_values = env.get(field_alt)
+            if field_values is not None:
+                break
+        else:
+            field_values = []
         if not isinstance(field_values, list):
             field_values = [field_values]
         prepared_env.append(set(field_values))
