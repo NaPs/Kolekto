@@ -4,6 +4,7 @@ from kolekto.commands import Command
 from kolekto.db import MoviesMetadata
 from kolekto.datasources import MovieDatasource
 from kolekto.printer import printer, bold
+from kolekto.helpers import get_hash
 
 
 METADATA_SORTER_FIRST = ('title', 'year', 'directors', 'cast', 'writers',
@@ -56,16 +57,18 @@ class Show(Command):
     help = 'show informations about a movie'
 
     def prepare(self):
-        self.add_arg('movie_hash')
+        self.add_arg('input', metavar='movie-hash-or-file')
 
     def run(self, args, config):
         mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
 
+        movie_hash = get_hash(args.input)
+
         try:
-            movie = mdb.get(args.movie_hash)
+            movie = mdb.get(movie_hash)
         except KeyError:
             printer.p('Unknown movie hash.')
             return
-        movie = mds.attach(args.movie_hash, movie)
+        movie = mds.attach(movie_hash, movie)
         show(movie)

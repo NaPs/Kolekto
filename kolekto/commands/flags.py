@@ -3,6 +3,7 @@ import os
 from kolekto.commands import Command
 from kolekto.db import MoviesMetadata
 from kolekto.printer import printer
+from kolekto.helpers import get_hash
 
 
 class Watch(Command):
@@ -13,14 +14,16 @@ class Watch(Command):
     help = 'flag a movie as watched'
 
     def prepare(self):
-        self.add_arg('movie_hash')
+        self.add_arg('input', metavar='movie-hash-or-file')
         self.add_arg('--unflag', '-u', action='store_true', default=False)
 
     def run(self, args, config):
         mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
 
+        movie_hash = get_hash(args.input)
+
         try:
-            movie = mdb.get(args.movie_hash)
+            movie = mdb.get(movie_hash)
         except KeyError:
             printer.p('Unknown movie hash.')
             return
@@ -31,4 +34,4 @@ class Watch(Command):
                 pass
         else:
             movie['watched'] = True
-        mdb.save(args.movie_hash, movie)
+        mdb.save(movie_hash, movie)
