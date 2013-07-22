@@ -22,7 +22,11 @@ def format_all(format_string, env):
         # Search for a movie attribute for each alternative field separated
         # by a pipe sign:
         for field_alt in (x.strip() for x in field.split('|')):
-            field_values = env.get(field_alt)
+            # Handle default values (enclosed by quotes):
+            if field_alt[0] in '\'"' and field_alt[-1] in '\'"':
+                field_values = field_alt[1:-1]
+            else:
+                field_values = env.get(field_alt)
             if field_values is not None:
                 break
         else:
