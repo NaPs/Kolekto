@@ -8,6 +8,22 @@ from kolekto.db import MoviesMetadata
 from kolekto.datasources import MovieDatasource
 
 
+class FormatWrapper(object):
+
+    """ A wrapper used to customize how movies attributes are formatted.
+    """
+
+    def __init__(self, title, obj):
+        self.title = title
+        self.obj = obj
+
+    def __format__(self, fmt):
+        if isinstance(self.obj, bool):
+            if self.obj:
+                return self.title.title()
+        return self.obj.__format__(fmt)
+
+
 def format_all(format_string, env):
     """ Format the input string using each possible combination of lists
         in the provided environment. Returns a list of formated strings.
@@ -33,7 +49,7 @@ def format_all(format_string, env):
             field_values = []
         if not isinstance(field_values, list):
             field_values = [field_values]
-        prepared_env.append(set(field_values))
+        prepared_env.append(set(FormatWrapper(field_alt, x) for x in field_values))
 
     # Generate each possible combination, format the string with it and yield
     # the resulting string:
