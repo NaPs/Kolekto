@@ -67,7 +67,7 @@ def main():
     try:
         args.command(args, config)
     except KolektoRuntimeError as err:
-        printer.p('Error: {err}', err=err)
+        printer.p('Error: {error}', error=err)
     except KeyboardInterrupt:
         printer.p('Interrupted by user.')
 
