@@ -6,12 +6,11 @@ from kolekto.printer import printer
 from kolekto.helpers import get_hash
 
 
-class Watch(Command):
+class FlagCommand(Command):
 
-    """ Flag a movie as watched.
-    """
-
-    help = 'flag a movie as watched'
+    flags = []  # Flags to set when this flag is set
+    unset_flags = []  # Flags to unset when this flag is set
+    unflag_unset_flags = []  # Flags to unset when this flag is unset
 
     def prepare(self):
         self.add_arg('input', metavar='movie-hash-or-file')
@@ -28,10 +27,27 @@ class Watch(Command):
             printer.p('Unknown movie hash.')
             return
         if args.unflag:
-            try:
-                del movie['watched']
-            except KeyError:
-                pass
+            for flag in self.unflag_unset_flags:
+                try:
+                    del movie[flag]
+                except KeyError:
+                    pass
         else:
-            movie['watched'] = True
+            for flag in self.flags:
+                movie[flag] = True
+            for flag in self.unset_flags:
+                try:
+                    del movie[flag]
+                except KeyError:
+                    pass
         mdb.save(movie_hash, movie)
+
+
+class Watch(FlagCommand):
+
+    """ Flag a movie as watched.
+    """
+
+    flags = ['watched']
+    unflag_unset_flags = ['watched']
+    help = 'flag a movie as watched'
