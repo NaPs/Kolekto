@@ -49,5 +49,27 @@ class Watch(FlagCommand):
     """
 
     flags = ['watched']
-    unflag_unset_flags = ['watched']
+    unflag_unset_flags = ['watched', 'favorite', 'crap']
     help = 'flag a movie as watched'
+
+
+class Favorite(FlagCommand):
+
+    """ Flag a movie as favorite.
+    """
+
+    flags = ['favorite', 'watched']
+    unset_flags = ['crap']
+    unflag_unset_flags = ['favorite']
+    help = 'flag a movie as favorite (and also set it as watched)'
+
+
+class Crap(FlagCommand):
+
+    """ Flag a movie as crap.
+    """
+
+    flags = ['crap', 'watched']
+    unset_flags = ['favorite']
+    unflag_unset_flags = ['crap']
+    help = 'flag a movie as crap (and also set it as watched)'
