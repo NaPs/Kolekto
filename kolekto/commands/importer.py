@@ -11,6 +11,7 @@ from kolekto.commands.show import show
 from kolekto.datasources import MovieDatasource
 from kolekto.movie import Movie
 from kolekto.db import MoviesMetadata
+from kolekto.exceptions import KolektoRuntimeError
 
 
 def clean_title(title):
@@ -34,6 +35,8 @@ class Import(Command):
         self.add_arg('file', nargs='+', help='Files to import (globbing allowed)')
         self.add_arg('--hardlink', action='store_true', default=False,
                      help='Create an hardlink instead of copying the file')
+        self.add_arg('--symlink', action='store_true', default=False,
+                     help='Create a symlink instead of copying the file')
         self.add_arg('--auto', '-a', action='store_true', default=False,
                      help='Automatically choose the most revelent movie.')
         self.add_arg('--dont-show', dest='show', action='store_false', default=True,
@@ -42,6 +45,12 @@ class Import(Command):
                      help='Delete imported file after a successful import')
 
     def run(self, args, config):
+        # Check the args:
+        if args.symlink and args.delete:
+            raise KolektoRuntimeError('--delete can\'t be used with --symlink')
+        elif args.symlink and args.hardlink:
+            raise KolektoRuntimeError('--symlink and --hardlink are mutually exclusive')
+
         # Load the metadata database:
         mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
 
@@ -79,7 +88,7 @@ class Import(Command):
                         os.rename(fdestination.name, dest)
         return filehash.hexdigest()
 
-    def _hardlink(self, tree, source_filename):
+    def _link(self, tree, source_filename, symlink=False):
         filehash = sha1()
         with printer.progress(os.path.getsize(source_filename)) as update:
             with open(source_filename, 'rb') as fsource:
@@ -95,7 +104,10 @@ class Import(Command):
                     if os.path.exists(dest):
                         raise IOError('This file already exists in tree (%s)' % filehash.hexdigest())
                     else:
-                        os.link(source_filename, dest)
+                        if symlink:
+                            os.symlink(source_filename, dest)
+                        else:
+                            os.link(source_filename, dest)
         return filehash.hexdigest()
 
     def _import(self, mdb, mds, args, config, filename):
@@ -136,9 +148,9 @@ class Import(Command):
             movie = Movie(json.loads(printer.edit(json.dumps(movie, indent=True))))
 
         # Hardlink or copy the movie in the tree
-        if args.hardlink:
+        if args.hardlink or args.symlink:
             printer.p('\nComputing movie sha1sum...')
-            movie_hash = self._hardlink(args.tree, filename)
+            movie_hash = self._link(args.tree, filename, args.symlink)
         else:
             printer.p('\nCopying movie in kolekto tree...')
             movie_hash = self._copy(args.tree, filename)
