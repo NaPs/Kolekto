@@ -58,7 +58,7 @@ def search():
         movies = []
         for movie in found['results']:
             cast = get_on_tmdb(u'/movie/%s/casts' % movie['id'])
-            year = None if movie['release_date'] is None else datetime.strptime(movie['release_date'], '%Y-%m-%d').year
+            year = datetime.strptime(movie['release_date'], '%Y-%m-%d').year if movie['release_date'] else None
             movies.append({'title': movie['original_title'],
                            'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
                            'year': year,
