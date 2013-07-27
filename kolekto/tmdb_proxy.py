@@ -42,6 +42,7 @@ def get_on_tmdb(uri, **kwargs):
     """
     kwargs['api_key'] = app.config['TMDB_API_KEY']
     response = requests_session.get((TMDB_API_URL + uri).encode('utf8'), params=kwargs)
+    response.raise_for_status()
     return json.loads(response.text)
 
 
@@ -54,15 +55,18 @@ def search():
     if cached:
         return Response(cached)
     else:
-        found = get_on_tmdb(u'/search/movie', query=request.args['query'])
-        movies = []
-        for movie in found['results']:
-            cast = get_on_tmdb(u'/movie/%s/casts' % movie['id'])
-            year = datetime.strptime(movie['release_date'], '%Y-%m-%d').year if movie['release_date'] else None
-            movies.append({'title': movie['original_title'],
-                           'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
-                           'year': year,
-                           '_tmdb_id': movie['id']})
+        try:
+            found = get_on_tmdb(u'/search/movie', query=request.args['query'])
+            movies = []
+            for movie in found['results']:
+                cast = get_on_tmdb(u'/movie/%s/casts' % movie['id'])
+                year = datetime.strptime(movie['release_date'], '%Y-%m-%d').year if movie['release_date'] else None
+                movies.append({'title': movie['original_title'],
+                               'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
+                               'year': year,
+                               '_tmdb_id': movie['id']})
+        except requests.HTTPError as err:
+            return Response('TMDB API error: %s' % str(err), status=err.response.status_code)
         json_response = json.dumps({'movies': movies})
         redis_conn.setex(redis_key, app.config['CACHE_TTL'], json_response)
         return Response(json_response)
@@ -77,9 +81,12 @@ def get_movie(tmdb_id):
     if cached:
         return Response(cached)
     else:
-        details = get_on_tmdb(u'/movie/%d' % tmdb_id)
-        cast = get_on_tmdb(u'/movie/%d/casts' % tmdb_id)
-        alternative = get_on_tmdb(u'/movie/%d/alternative_titles' % tmdb_id)
+        try:
+            details = get_on_tmdb(u'/movie/%d' % tmdb_id)
+            cast = get_on_tmdb(u'/movie/%d/casts' % tmdb_id)
+            alternative = get_on_tmdb(u'/movie/%d/alternative_titles' % tmdb_id)
+        except requests.HTTPError as err:
+            return Response('TMDB API error: %s' % str(err), status=err.response.status_code)
         movie = {'title': details['original_title'],
                  'score': details['popularity'],
                  'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
