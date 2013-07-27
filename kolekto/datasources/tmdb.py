@@ -46,13 +46,18 @@ class TmdbDatasource(Datasource):
         for _ in xrange(3):
             printer.debug('Requesting {url}', url=url)
             response = requests.get(url)
-            if not 200 <= response.status_code < 400 :
+            if not response.ok:
                 printer.debug('Got error ({http_err}), retrying in 3s...', http_err=response.status_code)
                 time.sleep(3)
                 continue
             return json.loads(response.text)
         else:
-            raise KolektoRuntimeError('Unable to get the URL')
+            err_msg = 'Unable to get the URL, server reported error: %s' % response.status_code
+            # Show the error reason message to the user if the requests
+            # version is sufficiently recent:
+            if hasattr(response, 'reason'):
+                err_msg += ' (%s)' % response.reason
+            raise KolektoRuntimeError(err_msg)
 
     def _tmdb_get(self, movie_id):
         return self._get(self.URL_GET, id=movie_id)
@@ -136,13 +141,18 @@ class TmdbProxyDatasource(Datasource):
         for _ in xrange(3):
             printer.debug('Requesting {url}', url=url)
             response = requests_session.get(url, params=kwargs)
-            if not 200 <= response.status_code < 400 :
+            if not response.ok :
                 printer.debug('Got error ({http_err}), retrying in 3s...', http_err=response.status_code)
                 time.sleep(3)
                 continue
             return json.loads(response.text)
         else:
-            raise KolektoRuntimeError('Unable to get the URL')
+            err_msg = 'Unable to get the URL, server reported error: %s' % response.status_code
+            # Show the error reason message to the user if the requests
+            # version is sufficiently recent:
+            if hasattr(response, 'reason'):
+                err_msg += ' (%s)' % response.reason
+            raise KolektoRuntimeError(err_msg)
 
     def search(self, title, year=None):
         results = self._get('/1/search', query=title)['movies']
