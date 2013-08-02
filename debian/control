@@ -18,6 +18,7 @@ Depends: ${misc:Depends},
          python-kaa-metadata,
          python-progressbar,
          python-requests,
+         python-gdbm,
 XB-Python-Version: ${python:Versions}
 Description: This package provide the common libraries of the Kolekto project
  .
