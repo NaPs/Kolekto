@@ -9,15 +9,16 @@ class MoviesMetadata(object):
     """ A database used to store metadata about movies managed by kolekto.
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, object_class=Movie):
         self._db = gdbm.open(filename, 'c')
+        self._object_class = object_class
 
     def get(self, movie_hash):
         """ Get information about a movie using its sha1.
 
         :param movie_hash: name of the movie
         """
-        return Movie(json.loads(self._db[movie_hash]))
+        return self._object_class(json.loads(self._db[movie_hash]))
 
     def count(self):
         """ Count movies in the database.
