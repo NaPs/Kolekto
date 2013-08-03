@@ -1,31 +1,39 @@
 import os
 
+import pkg_resources
+
 from kolekto.printer import printer
 from kolekto.commands import Command
 from kolekto.exceptions import KolektoRuntimeError
 
 
 DEFAULT_CONFIG = '''
-view 'Titles' {
-    pattern = '{title}.{ext}'
-}
+profile = '{profile}'
+
+view 'Titles' {{
+    pattern = '{{title}}.{{ext}}'
+}}
 
 # By default, the tree will use the tmdb_proxy datasource which will allow
 # you to get data from TMDB without requiring an API key:
-datasource 'tmdb_proxy' {
+datasource 'tmdb_proxy' {{
     base_url = 'http://api.kolekto-project.org/'
     max_results = 2
-}
+}}
 
 # Uncomment and enter your API key to enable the TMDB datasource:
-#datasource 'tmdb' {
+#datasource 'tmdb' {{
 #    api_key = '<enter your tmdb api key>'
 #    max_results = 2
-#}
+#}}
 
 # Get informations from files (quality, runtime...):
-datasource 'mediainfos' {}
+datasource 'mediainfos' {{}}
 '''
+
+
+def get_profiles_name():
+    return set(x.name for x in pkg_resources.iter_entry_points(group='kolekto.profiles'))
 
 
 class Init(Command):
@@ -34,6 +42,10 @@ class Init(Command):
     """
 
     help = 'initialize a new Kolekto tree'
+
+    def prepare(self):
+        self.add_arg('--profile', '-p', default='movies', choices=get_profiles_name(),
+                     help='Select the profile to use')
 
     def run(self, args, config):
         if config is not None:
@@ -47,7 +59,7 @@ class Init(Command):
 
         # Write the default config:
         with open(os.path.join(args.tree, '.kolekto', 'config'), 'w') as fconfig:
-            fconfig.write(DEFAULT_CONFIG)
+            fconfig.write(DEFAULT_CONFIG.format(profile=args.profile))
         printer.p('Initialized empty Kolekto tree in {where}.', where=os.path.abspath(args.tree))
 
         # Open the metadata db to create it automatically:
