@@ -8,9 +8,14 @@ class Command(object):
 
     help = ''
 
-    def __init__(self, name, aparser_subs):
+    def __init__(self, name, profile, aparser_subs):
         self._aparser = aparser_subs.add_parser(name, help=self.help)
+        self._profile = profile
         self._aparser.set_defaults(command=self.run, command_name=name)
+
+    @property
+    def profile(self):
+        return self._profile
 
     def add_arg(self, *args, **kwargs):
         """ Add an argument to the command argument parser.

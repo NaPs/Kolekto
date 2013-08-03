@@ -5,8 +5,6 @@
 import os
 import argparse
 
-import pkg_resources
-
 from kolekto.printer import printer
 from kolekto.exceptions import KolektoRuntimeError
 from kolekto.config import parse_config
@@ -50,6 +48,9 @@ def main():
         else:
             raise
 
+    profile_name, profile_class = config.get('profile')
+    profile = profile_class(profile_name, config)
+
     # Create the final argument parser:
     aparser = argparse.ArgumentParser()
     aparser.add_argument('-t', '--tree', default=find_root())
@@ -58,12 +59,8 @@ def main():
     aparser.add_argument('-V', '--verbose', action='store_true', default=False)
     aparser_subs = aparser.add_subparsers(help='Kolekto commands')
 
-    # Register all the kolekto commands:
-    commands = {}
-    for entrypoint in pkg_resources.iter_entry_points(group='kolekto.commands'):
-        command_class = entrypoint.load()
-        commands[entrypoint.name] = command_class(entrypoint.name, aparser_subs)
-        commands[entrypoint.name].prepare()
+    # Register all the kolekto commands for the profile:
+    profile.load_commands(aparser_subs)
 
     # Parse the command line arguments:
     args = aparser.parse_args()
