@@ -19,6 +19,21 @@ class Movie(dict):
         slug = re.sub(r'[^a-z0-9_]', '', slug)
         return slug
 
+    def __unicode__(self):
+        if self.get('directors'):
+            directors = ' by '
+            if len(self['directors']) > 1:
+                directors += '%s and %s' % (', '.join(self['directors'][0:-1]),
+                                                      self['directors'][-1])
+            else:
+                directors += self['directors'][0]
+        else:
+            directors = ''
+        fmt = u'{title} ({year}){directors}'
+        return fmt.format(title=bold(self.get('title', 'No title')),
+                          year=self.get('year', 'Unknown'),
+                          directors=directors)
+
 
 class Movies(Profile):
 
