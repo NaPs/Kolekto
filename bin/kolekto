@@ -8,6 +8,7 @@ import argparse
 from kolekto.printer import printer
 from kolekto.exceptions import KolektoRuntimeError
 from kolekto.config import parse_config
+from kolekto.profiles import NoProfileProfile
 
 
 def find_root():
@@ -48,8 +49,11 @@ def main():
         else:
             raise
 
-    profile_name, profile_class = config.get('profile')
-    profile = profile_class(profile_name, config)
+    if config is None:
+        profile = NoProfileProfile('no-profile', None)
+    else:
+        profile_name, profile_class = config.get('profile')
+        profile = profile_class(profile_name, config)
 
     # Create the final argument parser:
     aparser = argparse.ArgumentParser()

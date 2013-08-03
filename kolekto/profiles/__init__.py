@@ -11,14 +11,18 @@ class Profile(object):
         self.name = name
         self.config = config
 
+    def _get_entrypoints(self):
+        return chain(pkg_resources.iter_entry_points(group='kolekto.commands.%s' % self.name),
+                     pkg_resources.iter_entry_points(group='kolekto.commands'),
+                     pkg_resources.iter_entry_points(group='kolekto.commands.no_profile'))
+
     def load_commands(self, parser):
         """ Load commands of this profile.
 
         :param parser: argparse parser on which to add commands
         """
 
-        entrypoints = chain(pkg_resources.iter_entry_points(group='kolekto.commands.%s' % self.name),
-                            pkg_resources.iter_entry_points(group='kolekto.commands'))
+        entrypoints = self._get_entrypoints()
 
         already_loaded = set()
         for entrypoint in entrypoints:
@@ -27,3 +31,11 @@ class Profile(object):
                 command_class(entrypoint.name, self, parser).prepare()
                 already_loaded.add(entrypoint.name)
 
+
+class NoProfileProfile(Profile):
+
+    """ Special profile used when no profile is loaded.
+    """
+
+    def _get_entrypoints(self):
+        return pkg_resources.iter_entry_points(group='kolekto.commands.no_profile')
