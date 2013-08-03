@@ -1,9 +1,7 @@
-import os
 import json
 
 from kolekto.printer import printer
 from kolekto.commands import Command
-from kolekto.db import MoviesMetadata
 
 
 class Dump(Command):
@@ -14,6 +12,6 @@ class Dump(Command):
     help = 'dump database into json'
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        mdb = self.get_metadata_db(args.tree)
         dump = [{'hash': x, 'movie': y} for x, y in mdb.itermovies()]
         json.dump(dump, printer.output)

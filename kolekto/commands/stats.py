@@ -4,7 +4,6 @@ from collections import defaultdict
 from itertools import islice
 
 from kolekto.commands import Command
-from kolekto.db import MoviesMetadata
 from kolekto.datasources import MovieDatasource
 from kolekto.printer import printer, bold
 
@@ -47,7 +46,7 @@ class Stats(Command):
     help = 'get stats about the movie collection'
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        mdb = self.get_metadata_db(args.tree)
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
         total_runtime = 0
         total_size = 0

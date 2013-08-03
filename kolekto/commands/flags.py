@@ -1,7 +1,4 @@
-import os
-
 from kolekto.commands import Command
-from kolekto.db import MoviesMetadata
 from kolekto.printer import printer
 from kolekto.helpers import get_hash
 
@@ -17,7 +14,7 @@ class FlagCommand(Command):
         self.add_arg('--unflag', '-u', action='store_true', default=False)
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        mdb = self.get_metadata_db(args.tree)
 
         movie_hash = get_hash(args.input)
 

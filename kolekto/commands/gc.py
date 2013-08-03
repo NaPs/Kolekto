@@ -2,7 +2,6 @@ import os
 
 from kolekto.printer import printer
 from kolekto.commands import Command
-from kolekto.db import MoviesMetadata
 
 
 class Gc(Command):
@@ -13,7 +12,7 @@ class Gc(Command):
     help = 'garbage collect orphan files'
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        mdb = self.get_metadata_db(args.tree)
         db_files = set()
         for movie_hash, movie in mdb.itermovies():
             db_files.add(movie_hash)

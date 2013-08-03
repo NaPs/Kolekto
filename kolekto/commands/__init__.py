@@ -1,3 +1,8 @@
+import os
+
+from kolekto.db import MoviesMetadata
+
+
 class Command(object):
 
     """
@@ -36,3 +41,7 @@ class Command(object):
         :param config: parsed configuration
         """
         pass
+
+    def get_metadata_db(self, tree):
+        return MoviesMetadata(os.path.join(tree, '.kolekto', 'metadata.db'),
+                              object_class=self.profile.object_class)

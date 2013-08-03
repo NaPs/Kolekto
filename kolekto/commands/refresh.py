@@ -1,8 +1,5 @@
-import os
-
 from kolekto.printer import printer
 from kolekto.commands import Command
-from kolekto.db import MoviesMetadata
 from kolekto.datasources import MovieDatasource
 from kolekto.commands.show import show
 from kolekto.helpers import get_hash
@@ -21,7 +18,7 @@ class Refresh(Command):
                           'If not specified, refresh all movies.')
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        mdb = self.get_metadata_db(args.tree)
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
 
         if args.input is None: # Refresh all movies

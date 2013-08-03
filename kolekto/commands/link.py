@@ -4,7 +4,6 @@ from itertools import product, izip
 
 from kolekto.printer import printer
 from kolekto.commands import Command
-from kolekto.db import MoviesMetadata
 from kolekto.datasources import MovieDatasource
 
 
@@ -92,7 +91,7 @@ class Link(Command):
                      help='Do not create or delete any link')
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        mdb = self.get_metadata_db(args.tree)
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
 
         if args.dry_run:

@@ -1,9 +1,7 @@
-import os
 import json
 
 from kolekto.printer import printer
 from kolekto.commands import Command
-from kolekto.db import MoviesMetadata
 from kolekto.helpers import get_hash
 
 
@@ -18,7 +16,7 @@ class Edit(Command):
         self.add_arg('input', metavar='movie-hash-or-file')
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        mdb = self.get_metadata_db(args.tree)
 
         movie_hash = get_hash(args.input)
 

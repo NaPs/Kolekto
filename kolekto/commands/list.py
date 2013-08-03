@@ -1,7 +1,4 @@
-import os
-
 from kolekto.commands import Command
-from kolekto.db import MoviesMetadata
 from kolekto.printer import printer, bold, highlight_white
 
 
@@ -13,7 +10,7 @@ class List(Command):
     help = 'list movies'
 
     def run(self, args, config):
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        mdb = self.get_metadata_db(args.tree)
         movies = sorted(mdb.itermovies(), key=lambda x: (x[1].get('title'), x[1].get('year')))
         for movie_hash, movie in movies:
             if movie.get('directors'):

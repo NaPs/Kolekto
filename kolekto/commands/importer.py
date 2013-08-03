@@ -9,8 +9,6 @@ from kolekto.printer import printer, bold
 from kolekto.commands import Command
 from kolekto.commands.show import show
 from kolekto.datasources import MovieDatasource
-from kolekto.movie import Movie
-from kolekto.db import MoviesMetadata
 from kolekto.exceptions import KolektoRuntimeError
 
 
@@ -52,7 +50,7 @@ class Import(Command):
             raise KolektoRuntimeError('--symlink and --hardlink are mutually exclusive')
 
         # Load the metadata database:
-        mdb = MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        mdb = self.get_metadata_db(args.tree)
 
         # Load informations from db:
         mds = MovieDatasource(config.subsections('datasource'), args.tree)
@@ -127,7 +125,7 @@ class Import(Command):
                 title = printer.input(u'Title to search', default=title)
             datasource, movie = self._search(mds, title, short_filename, year, auto=args.auto)
             if datasource == 'manual':
-                movie = Movie()
+                movie = self.profile.object_class
             elif datasource == 'abort':
                 printer.p('Aborted import of {filename}', filename=filename)
                 return
@@ -145,7 +143,7 @@ class Import(Command):
 
         # Edit available data:
         if not args.auto and printer.ask('Do you want to edit the movie metadata', default=False):
-            movie = Movie(json.loads(printer.edit(json.dumps(movie, indent=True))))
+            movie = self.profile.object_class(json.loads(printer.edit(json.dumps(movie, indent=True))))
 
         # Hardlink or copy the movie in the tree
         if args.hardlink or args.symlink:

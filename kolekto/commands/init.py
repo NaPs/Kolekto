@@ -3,7 +3,6 @@ import os
 from kolekto.printer import printer
 from kolekto.commands import Command
 from kolekto.exceptions import KolektoRuntimeError
-from kolekto.db import MoviesMetadata
 
 
 DEFAULT_CONFIG = '''
@@ -52,4 +51,4 @@ class Init(Command):
         printer.p('Initialized empty Kolekto tree in {where}.', where=os.path.abspath(args.tree))
 
         # Open the metadata db to create it automatically:
-        MoviesMetadata(os.path.join(args.tree, '.kolekto', 'metadata.db'))
+        self.get_metadata_db(args.tree)
