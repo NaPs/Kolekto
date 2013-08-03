@@ -5,6 +5,8 @@ import pkg_resources
 
 class Profile(object):
 
+    object_class = dict
+
     def __init__(self, name, config):
         self.name = name
         self.config = config

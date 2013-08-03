@@ -1,15 +1,13 @@
 import json
 import gdbm
 
-from kolekto.movie import Movie
-
 
 class MoviesMetadata(object):
 
     """ A database used to store metadata about movies managed by kolekto.
     """
 
-    def __init__(self, filename, object_class=Movie):
+    def __init__(self, filename, object_class=dict):
         self._db = gdbm.open(filename, 'c')
         self._object_class = object_class
 
