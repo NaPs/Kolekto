@@ -33,6 +33,24 @@ def find_root():
 def main():
     """ Binary entry-point.
     """
+
+    # Create a bootstrap argument parser only used to set the used tree to
+    # know the configuration to parse before to continue:
+    bootstrap_parser = argparse.ArgumentParser(add_help=False)
+    bootstrap_parser.add_argument('-t', '--tree', default=find_root())
+
+    args, __ = bootstrap_parser.parse_known_args()
+
+    # Parse configuration:
+    try:
+        config = parse_config(os.path.join(args.tree, '.kolekto', 'config'))
+    except IOError as err:
+        if err.errno == 2:
+            config = None
+        else:
+            raise
+
+    # Create the final argument parser:
     aparser = argparse.ArgumentParser()
     aparser.add_argument('-t', '--tree', default=find_root())
     aparser.add_argument('-e', '--editor', default=os.environ.get('EDITOR', 'vim'))
@@ -52,15 +70,6 @@ def main():
 
     # Configure the main printer:
     printer.configure(verbose=args.verbose, debug=args.debug, editor=args.editor)
-
-    # Parse configuration:
-    try:
-        config = parse_config(os.path.join(args.tree, '.kolekto', 'config'))
-    except IOError as err:
-        if err.errno == 2:
-            config = None
-        else:
-            raise
 
     # Execute the selected command:
     printer.debug('Executing command {cmd}', cmd=args.command)
