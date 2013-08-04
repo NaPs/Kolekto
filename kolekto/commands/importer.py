@@ -22,6 +22,56 @@ def clean_title(title):
         return year, title
 
 
+def copy(tree, source_filename):
+    """ Copy file in tree, show a progress bar during operations,
+        and return the sha1 sum of copied file.
+    """
+    #_, ext = os.path.splitext(source_filename)
+    filehash = sha1()
+    with printer.progress(os.path.getsize(source_filename)) as update:
+        with open(source_filename, 'rb') as fsource:
+            with NamedTemporaryFile(dir=os.path.join(tree, '.kolekto', 'movies'), delete=False) as fdestination:
+                # Copy the source into the temporary destination:
+                while True:
+                    buf = fsource.read(10 * 1024)
+                    if not buf:
+                        break
+                    filehash.update(buf)
+                    fdestination.write(buf)
+                    update(len(buf))
+                # Rename the file to its final name or raise an error if
+                # the file already exists:
+                dest = os.path.join(tree, '.kolekto', 'movies', filehash.hexdigest())
+                if os.path.exists(dest):
+                    raise IOError('This file already exists in tree (%s)' % filehash.hexdigest())
+                else:
+                    os.rename(fdestination.name, dest)
+    return filehash.hexdigest()
+
+
+def link(tree, source_filename, symlink=False):
+    filehash = sha1()
+    with printer.progress(os.path.getsize(source_filename)) as update:
+        with open(source_filename, 'rb') as fsource:
+                # Copy the source into the temporary destination:
+                while True:
+                    buf = fsource.read(10 * 1024)
+                    if not buf:
+                        break
+                    filehash.update(buf)
+                    update(len(buf))
+                # Hardlink the file or raise an error if the file already exists:
+                dest = os.path.join(tree, '.kolekto', 'movies', filehash.hexdigest())
+                if os.path.exists(dest):
+                    raise IOError('This file already exists in tree (%s)' % filehash.hexdigest())
+                else:
+                    if symlink:
+                        os.symlink(source_filename, dest)
+                    else:
+                        os.link(source_filename, dest)
+    return filehash.hexdigest()
+
+
 class Import(Command):
 
     """ Import movies into the Kolekto tree.
@@ -59,54 +109,6 @@ class Import(Command):
             for filename in glob(pattern):
                 filename = filename.decode('utf8')
                 self._import(mdb, mds, args, config, filename)
-
-    def _copy(self, tree, source_filename):
-        """ Copy file in tree, show a progress bar during operations,
-            and return the sha1 sum of copied file.
-        """
-        #_, ext = os.path.splitext(source_filename)
-        filehash = sha1()
-        with printer.progress(os.path.getsize(source_filename)) as update:
-            with open(source_filename, 'rb') as fsource:
-                with NamedTemporaryFile(dir=os.path.join(tree, '.kolekto', 'movies'), delete=False) as fdestination:
-                    # Copy the source into the temporary destination:
-                    while True:
-                        buf = fsource.read(10 * 1024)
-                        if not buf:
-                            break
-                        filehash.update(buf)
-                        fdestination.write(buf)
-                        update(len(buf))
-                    # Rename the file to its final name or raise an error if
-                    # the file already exists:
-                    dest = os.path.join(tree, '.kolekto', 'movies', filehash.hexdigest())
-                    if os.path.exists(dest):
-                        raise IOError('This file already exists in tree (%s)' % filehash.hexdigest())
-                    else:
-                        os.rename(fdestination.name, dest)
-        return filehash.hexdigest()
-
-    def _link(self, tree, source_filename, symlink=False):
-        filehash = sha1()
-        with printer.progress(os.path.getsize(source_filename)) as update:
-            with open(source_filename, 'rb') as fsource:
-                    # Copy the source into the temporary destination:
-                    while True:
-                        buf = fsource.read(10 * 1024)
-                        if not buf:
-                            break
-                        filehash.update(buf)
-                        update(len(buf))
-                    # Hardlink the file or raise an error if the file already exists:
-                    dest = os.path.join(tree, '.kolekto', 'movies', filehash.hexdigest())
-                    if os.path.exists(dest):
-                        raise IOError('This file already exists in tree (%s)' % filehash.hexdigest())
-                    else:
-                        if symlink:
-                            os.symlink(source_filename, dest)
-                        else:
-                            os.link(source_filename, dest)
-        return filehash.hexdigest()
 
     def _import(self, mdb, mds, args, config, filename):
         printer.debug('Importing file {filename}', filename=filename)
@@ -148,10 +150,10 @@ class Import(Command):
         # Hardlink or copy the movie in the tree
         if args.hardlink or args.symlink:
             printer.p('\nComputing movie sha1sum...')
-            movie_hash = self._link(args.tree, filename, args.symlink)
+            movie_hash = link(args.tree, filename, args.symlink)
         else:
             printer.p('\nCopying movie in kolekto tree...')
-            movie_hash = self._copy(args.tree, filename)
+            movie_hash = copy(args.tree, filename)
         printer.p('')
 
         mdb.save(movie_hash, movie)
