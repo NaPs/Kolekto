@@ -6,6 +6,8 @@ import pkg_resources
 from dotconf.schema.containers import Section, Value
 from dotconf.schema.types import String
 
+from ..exceptions import KolektoRuntimeError
+
 
 class DefaultDatasourceSchema(Section):
 
@@ -54,7 +56,7 @@ class MovieDatasource(object):
         for datasource_config in datasources_config:
             entrypoints = tuple(pkg_resources.iter_entry_points('kolekto.datasources', datasource_config.args))
             if not entrypoints:
-                raise Exception('Bad datasource %r' % datasource_config.args)
+                raise KolektoRuntimeError('Bad datasource %r' % datasource_config.args)
             datasource_class = entrypoints[0].load()
             datasource_config = datasource_class.config_schema.validate(datasource_config)
             ds = datasource_class(entrypoints[0].name, tree, datasource_config, self._object_class)
