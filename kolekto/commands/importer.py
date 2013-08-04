@@ -72,12 +72,11 @@ def link(tree, source_filename, symlink=False):
     return filehash.hexdigest()
 
 
-class Import(Command):
+class BaseImport(Command):
 
-    """ Import movies into the Kolekto tree.
+    """ Base class for importers.
     """
 
-    help = 'import a movie'
 
     def prepare(self):
         self.add_arg('file', nargs='+', help='Files to import (globbing allowed)')
@@ -109,6 +108,17 @@ class Import(Command):
             for filename in glob(pattern):
                 filename = filename.decode('utf8')
                 self._import(mdb, mds, args, config, filename)
+
+    def _import(self):
+        raise NotImplementedError()
+
+
+class ImportMovies(BaseImport):
+
+    """ Import movies into the Kolekto tree.
+    """
+
+    help = 'import a movie'
 
     def _import(self, mdb, mds, args, config, filename):
         printer.debug('Importing file {filename}', filename=filename)
