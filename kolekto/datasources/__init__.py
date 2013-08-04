@@ -62,9 +62,9 @@ class MovieDatasource(object):
             ds = datasource_class(entrypoints[0].name, tree, datasource_config, self._object_class)
             self._datasources.append(ds)
 
-    def search(self, title, year=None):
+    def search(self, title, **kwargs):
         for datasource in self._datasources:
-            for movie in datasource.search(title, year):
+            for movie in datasource.search(title, **kwargs):
                 yield datasource, movie
 
     def refresh(self, movie):

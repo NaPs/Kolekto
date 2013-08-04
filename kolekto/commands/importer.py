@@ -168,7 +168,7 @@ class Import(Command):
         If auto is enabled, directly returns the first movie found.
         """
         choices = []
-        for datasource, movie in mdb.search(query, year):
+        for datasource, movie in mdb.search(query, year=year):
             if auto:
                 return datasource, movie
             if movie.get('directors'):
