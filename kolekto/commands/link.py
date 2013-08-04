@@ -102,18 +102,19 @@ class Link(Command):
         for movie_hash, movie in mdb.itermovies():
             movie = mds.attach(movie_hash, movie)
             for view in config.subsections('view'):
-                for result in format_all(view.get('pattern'), movie):
-                    filename = os.path.join(view.args[0], result)
-                    if filename in db_links:
-                        printer.p('Warning: duplicate link {link}', link=filename)
-                    else:
-                        db_links[filename] = movie_hash
+                for pattern in view.get('pattern'):
+                    for result in format_all(pattern, movie):
+                        filename = os.path.join(view.args, result)
+                        if filename in db_links:
+                            printer.p('Warning: duplicate link {link}', link=filename)
+                        else:
+                            db_links[filename] = movie_hash
 
         # Create the list of links already existing on the fs:
         fs_links = {}
         for view in config.subsections('view'):
-            view_links = walk_links(os.path.join(args.tree, view.args[0]),
-                                    prefix=view.args[0],
+            view_links = walk_links(os.path.join(args.tree, view.args),
+                                    prefix=view.args,
                                     linkbase=os.path.join(args.tree, '.kolekto', 'movies'))
             fs_links.update(view_links)
 

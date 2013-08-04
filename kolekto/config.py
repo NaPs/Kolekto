@@ -5,7 +5,7 @@ import pkg_resources
 
 from dotconf import Dotconf
 from dotconf.schema import ValidationError
-from dotconf.schema.containers import Section, Value
+from dotconf.schema.containers import Section, Value, List
 from dotconf.schema.types import String
 
 from .profiles.movies import Movies
@@ -36,7 +36,7 @@ class ViewKolektoConfig(Section):
              'unique': True,
              'repeat': (0, None)}
 
-    pattern = Value(String())
+    pattern = List(String())
 
 
 class DatasourceKolektoConfig(Section):
