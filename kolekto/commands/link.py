@@ -99,16 +99,18 @@ class Link(Command):
 
         # Create the list of links that must exists on the fs:
         db_links = {}
-        for movie_hash, movie in mdb.itermovies():
-            movie = mds.attach(movie_hash, movie)
-            for view in config.subsections('view'):
-                for pattern in view.get('pattern'):
-                    for result in format_all(pattern, movie):
-                        filename = os.path.join(view.args, result)
-                        if filename in db_links:
-                            printer.p('Warning: duplicate link {link}', link=filename)
-                        else:
-                            db_links[filename] = movie_hash
+        with printer.progress(mdb.count(), task=True) as update:
+            for movie_hash, movie in mdb.itermovies():
+                movie = mds.attach(movie_hash, movie)
+                for view in config.subsections('view'):
+                    for pattern in view.get('pattern'):
+                        for result in format_all(pattern, movie):
+                            filename = os.path.join(view.args, result)
+                            if filename in db_links:
+                                printer.p('Warning: duplicate link {link}', link=filename)
+                            else:
+                                db_links[filename] = movie_hash
+                update(1)
 
         # Create the list of links already existing on the fs:
         fs_links = {}
