@@ -48,7 +48,7 @@ def format_all(format_string, env):
             field_values = []
         if not isinstance(field_values, list):
             field_values = [field_values]
-        prepared_env.append(set(FormatWrapper(field_alt, x) for x in field_values))
+        prepared_env.append(tuple(FormatWrapper(field_alt, x) for x in set(field_values)))
 
     # Generate each possible combination, format the string with it and yield
     # the resulting string:
