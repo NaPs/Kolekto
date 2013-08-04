@@ -19,7 +19,7 @@ class Refresh(Command):
 
     def run(self, args, config):
         mdb = self.get_metadata_db(args.tree)
-        mds = MovieDatasource(config.subsections('datasource'), args.tree)
+        mds = MovieDatasource(config.subsections('datasource'), args.tree, self.profile.object_class)
 
         if args.input is None: # Refresh all movies
             if printer.ask('Would you like to refresh all movies?', default=True):

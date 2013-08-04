@@ -53,7 +53,7 @@ class Import(Command):
         mdb = self.get_metadata_db(args.tree)
 
         # Load informations from db:
-        mds = MovieDatasource(config.subsections('datasource'), args.tree)
+        mds = MovieDatasource(config.subsections('datasource'), args.tree, self.profile.object_class)
 
         for pattern in args.file:
             for filename in glob(pattern):

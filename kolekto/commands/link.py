@@ -92,7 +92,7 @@ class Link(Command):
 
     def run(self, args, config):
         mdb = self.get_metadata_db(args.tree)
-        mds = MovieDatasource(config.subsections('datasource'), args.tree)
+        mds = MovieDatasource(config.subsections('datasource'), args.tree, self.profile.object_class)
 
         if args.dry_run:
             printer.p('Dry run: I will not create or delete any link')

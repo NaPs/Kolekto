@@ -8,7 +8,6 @@ from datetime import datetime
 
 from kolekto.printer import printer
 from kolekto.datasources import Datasource, DefaultDatasourceSchema
-from kolekto.movie import Movie
 from kolekto.exceptions import KolektoRuntimeError
 
 from dotconf.schema.containers import Value
@@ -88,10 +87,10 @@ class TmdbDatasource(Datasource):
 
             # Else, format and yield the movie:
             cast = self._tmdb_cast(result['id'])
-            movie = Movie({'title': result['original_title'],
-                           'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
-                           '_datasource': self.name,
-                           '_tmdb_id': result['id']})
+            movie = self.object_class({'title': result['original_title'],
+                                       'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
+                                       '_datasource': self.name,
+                                       '_tmdb_id': result['id']})
             if movie_year:
                 movie['year'] = movie_year
             yield movie
@@ -107,16 +106,16 @@ class TmdbDatasource(Datasource):
             details = self._tmdb_get(tmdb_id)
             cast = self._tmdb_cast(tmdb_id)
             alternatives = self._tmdb_alt(tmdb_id)
-            refreshed = Movie({'title': details['original_title'],
-                               'score': details['popularity'],
-                               'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
-                               'writers': [x['name'] for x in cast['crew'] if x['department'] == 'Writing'],
-                               'cast': [x['name'] for x in cast['cast']],
-                               'genres': [x['name'] for x in details['genres']],
-                               'countries': [x['name'] for x in details['production_countries']],
-                               'tmdb_votes': int(round(details.get('vote_average', 0) * 0.5)),
-                               '_Datasource': self.name,
-                               '_tmdb_id': tmdb_id})
+            refreshed = self.object_class({'title': details['original_title'],
+                                           'score': details['popularity'],
+                                           'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
+                                           'writers': [x['name'] for x in cast['crew'] if x['department'] == 'Writing'],
+                                           'cast': [x['name'] for x in cast['cast']],
+                                           'genres': [x['name'] for x in details['genres']],
+                                           'countries': [x['name'] for x in details['production_countries']],
+                                           'tmdb_votes': int(round(details.get('vote_average', 0) * 0.5)),
+                                           '_Datasource': self.name,
+                                           '_tmdb_id': tmdb_id})
             if details.get('release_date'):
                 refreshed['year'] = datetime.strptime(details['release_date'], '%Y-%m-%d').year
             if details.get('belongs_to_collection'):
@@ -167,7 +166,7 @@ class TmdbProxyDatasource(Datasource):
             if year is not None and year != result.get('year'):
                 continue
 
-            movie = Movie(result)
+            movie = self.object_class(result)
             yield movie
 
             if max_results is not None:
