@@ -1,9 +1,13 @@
 import os
+import logging
 
 from kolekto.datasources import Datasource
 
 import kaa.metadata
 
+# Configure the kaa.metadata logger in order to silent it:
+metadata_logger = logging.getLogger('metadata')
+metadata_logger.setLevel(logging.CRITICAL)
 
 class MediainfosDatasource(Datasource):
 
