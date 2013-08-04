@@ -51,9 +51,9 @@ class MovieDatasource(object):
 
         self._datasources = []
         for datasource_config in datasources_config:
-            entrypoints = tuple(pkg_resources.iter_entry_points('kolekto.datasources', datasource_config.args[0]))
+            entrypoints = tuple(pkg_resources.iter_entry_points('kolekto.datasources', datasource_config.args))
             if not entrypoints:
-                raise Exception('Bad datasource %r' % datasource_config.args[0])
+                raise Exception('Bad datasource %r' % datasource_config.args)
             datasource_class = entrypoints[0].load()
             datasource_config = datasource_class.config_schema.validate(datasource_config)
             self._datasources.append(datasource_class(entrypoints[0].name, tree, datasource_config))
