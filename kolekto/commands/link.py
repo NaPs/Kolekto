@@ -141,11 +141,11 @@ class Link(Command):
             fullname = os.path.join(args.tree, filename)
             dirname = os.path.dirname(fullname)
             movie_link = os.path.join(args.tree, '.kolekto', 'movies', link)
-            try:
-                os.makedirs(dirname)
-            except OSError as err:
-                if err.errno != 17:  # Ignore already existing directory error
-                    raise
             printer.verbose('Link: {file!r} -> {link!r}', file=filename, link=link)
             if not args.dry_run:
+                try:
+                    os.makedirs(dirname)
+                except OSError as err:
+                    if err.errno != 17:  # Ignore already existing directory error
+                        raise
                 os.symlink(os.path.relpath(movie_link, dirname), fullname)
