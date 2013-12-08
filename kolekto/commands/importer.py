@@ -66,6 +66,8 @@ def link(tree, source_filename, symlink=False):
                     raise IOError('This file already exists in tree (%s)' % filehash.hexdigest())
                 else:
                     if symlink:
+                        source_filename = os.path.relpath(source_filename,
+                                                          os.path.join(tree, '.kolekto', 'movies'))
                         os.symlink(source_filename, dest)
                     else:
                         os.link(source_filename, dest)
