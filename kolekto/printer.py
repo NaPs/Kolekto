@@ -134,11 +134,13 @@ class KolektoPrinter(object):
     def edit(self, text):
         """ Edit a text using an external editor.
         """
+        if isinstance(text, unicode):
+            text = text.encode(self._encoding)
         if self._editor is None:
             printer.p('Warning: no editor found, skipping edit')
             return text
         with tempfile.NamedTemporaryFile(mode='w+', suffix='kolekto-edit') as ftmp:
-            ftmp.write(text.encode('utf-8'))
+            ftmp.write(text)
             ftmp.flush()
             subprocess.Popen([self._editor, ftmp.name]).wait()
             ftmp.seek(0)
