@@ -1,8 +1,8 @@
-kolekto (1.2~dev-1) unstable; urgency=low
+kolekto (1.2-1) stable; urgency=low
 
-  * Development release.
+  * New package release based on v1.2.
 
- -- Antoine Millet <antoine@inaps.org>  Tue, 30 Jul 2013 22:51:52 +0200
+ -- Antoine Millet <antoine@inaps.org>  Mon, 09 Dec 2013 22:09:33 +0100
 
 kolekto (1.1-1) wheezy; urgency=low
 

@@ -1,8 +1,17 @@
 Kolekto Changelog
 =================
 
-v1.2 (not yet released)
------------------------
+v1.2 released on 09/12/2013
+---------------------------
+
+- Added command profile system (first step to supporting tv shows)
+- Added multiple patterns in a single view
+- Added a progress bar on link generation operation
+- Fixed bad usage of Dotconf API
+- Fixed duplicate link problem
+- Fixed creating parent directories on link even with dry-run
+- Fixed config command with a non-ascii config file
+- Fixed symlink to be relative to movies pool on import
 
 v1.1 released on 27/07/2013
 ---------------------------
