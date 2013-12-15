@@ -13,11 +13,12 @@ from kolekto.exceptions import KolektoRuntimeError
 
 
 def clean_title(title):
+    title = re.sub('[._-]', ' ', title).strip().title()
     match = re.match('(.+)((19|2\d)\d\d)', title)
     if match is None:
         return None, title
     else:
-        title = match.group(1).replace('.', ' ').strip().title()
+        title = match.group(1)
         year = int(match.group(2))
         return year, title
 
