@@ -29,6 +29,13 @@ datasource 'tmdb_proxy' {{
 
 # Get informations from files (quality, runtime...):
 datasource 'mediainfos' {{}}
+
+# Uncomment these lines to enable fields rewriting datasource:
+#datasource 'rewrite' {{
+#    rewrite 'title_upper' {{
+#        value = 'movie["title"].upper()'
+#    }}
+#}}
 '''
 
 
