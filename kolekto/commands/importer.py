@@ -139,7 +139,7 @@ class ImportMovies(BaseImport):
                 title = printer.input(u'Title to search', default=title)
             datasource, movie = self._search(mds, title, short_filename, year, auto=args.auto)
             if datasource == 'manual':
-                movie = self.profile.object_class
+                movie = self.profile.object_class()
             elif datasource == 'abort':
                 printer.p('Aborted import of {filename}', filename=filename)
                 return
