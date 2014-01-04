@@ -1,10 +1,10 @@
 import os
-from string import Formatter
 from itertools import product, izip
 
 from kolekto.printer import printer
 from kolekto.commands import Command
 from kolekto.datasources import MovieDatasource
+from kolekto.pattern import parse_pattern
 
 
 class FormatWrapper(object):
@@ -28,32 +28,11 @@ def format_all(format_string, env):
         in the provided environment. Returns a list of formated strings.
     """
 
-    formatter = Formatter()
-    fields = [x[1] for x in formatter.parse(format_string) if x[1] is not None]
-
-    # Create a prepared environment with only used fields, all as list:
-    prepared_env = []
-    for field in fields:
-        # Search for a movie attribute for each alternative field separated
-        # by a pipe sign:
-        for field_alt in (x.strip() for x in field.split('|')):
-            # Handle default values (enclosed by quotes):
-            if field_alt[0] in '\'"' and field_alt[-1] in '\'"':
-                field_values = field_alt[1:-1]
-            else:
-                field_values = env.get(field_alt)
-            if field_values is not None:
-                break
-        else:
-            field_values = []
-        if not isinstance(field_values, list):
-            field_values = [field_values]
-        prepared_env.append(tuple(FormatWrapper(field_alt, x) for x in set(field_values)))
-
+    prepared_env = parse_pattern(format_string, env, lambda x, y: [FormatWrapper(x, z) for z in y])
     # Generate each possible combination, format the string with it and yield
     # the resulting string:
-    for field_values in product(*prepared_env):
-        format_env = dict(izip(fields, field_values))
+    for field_values in product(*prepared_env.itervalues()):
+        format_env = dict(izip(prepared_env.iterkeys(), field_values))
         yield format_string.format(**format_env)
 
 
