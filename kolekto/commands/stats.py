@@ -5,7 +5,7 @@ from itertools import islice
 
 from kolekto.commands import Command
 from kolekto.datasources import MovieDatasource
-from kolekto.printer import printer, bold
+from kolekto.printer import printer
 
 
 SUFFIXES = ('KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB')
@@ -66,10 +66,10 @@ class Stats(Command):
             count_by_quality[movie.get('quality', 'n/a')] += 1
             count_by_container[movie.get('container', 'n/a')] += 1
 
-        printer.p(bold('Number of movies:'), mdb.count())
-        printer.p(bold('Total runtime:'), timedelta(seconds=total_runtime * 60))
-        printer.p(bold('Total size:'), humanize_filesize(total_size))
-        printer.p(bold('Genres top3:'), format_top(count_by_genre))
-        printer.p(bold('Director top3:'), format_top(count_by_director))
-        printer.p(bold('Quality:'), format_top(count_by_quality, None))
-        printer.p(bold('Container:'), format_top(count_by_container, None))
+        printer.p('<b>Number of movies:</b>', mdb.count())
+        printer.p('<b>Total runtime:</b>', timedelta(seconds=total_runtime * 60))
+        printer.p('<b>Total size:</b>', humanize_filesize(total_size))
+        printer.p('<b>Genres top3:</b>', format_top(count_by_genre))
+        printer.p('<b>Director top3:</b>', format_top(count_by_director))
+        printer.p('<b>Quality:</b>', format_top(count_by_quality, None))
+        printer.p('<b>Container:</b>', format_top(count_by_container, None))

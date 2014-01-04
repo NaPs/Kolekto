@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from kolekto.printer import printer, bold
+from kolekto.printer import printer
 from kolekto.commands import Command
 
 
@@ -19,5 +19,5 @@ class FindDuplicates(Command):
 
         for (title, year), hashs in hash_by_title.iteritems():
             if len(hashs) > 1:
-                printer.p('{title} ({year}): {hashs}', title=bold(title),
+                printer.p('<b>{title}</b> ({year}): {hashs}', title=title,
                           year=year, hashs=' '.join(hashs))

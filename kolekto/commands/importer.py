@@ -5,7 +5,7 @@ from glob import glob
 from hashlib import sha1
 from tempfile import NamedTemporaryFile
 
-from kolekto.printer import printer, bold
+from kolekto.printer import printer
 from kolekto.commands import Command
 from kolekto.commands.show import show
 from kolekto.datasources import MovieDatasource
@@ -195,8 +195,8 @@ class ImportMovies(BaseImport):
                     directors += movie['directors'][0]
             else:
                 directors = ''
-            fmt = u'{title} ({year}){directors} [{datasource}]'
-            choices.append(((datasource, movie), fmt.format(title=bold(movie['title']),
+            fmt = u'<b>{title}</b> ({year}){directors} [{datasource}]'
+            choices.append(((datasource, movie), fmt.format(title=movie['title'],
                                                             year=movie.get('year', 'Unknown'),
                                                             directors=directors,
                                                             datasource=datasource.name)))

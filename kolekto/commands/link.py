@@ -16,11 +16,11 @@ class FormatWrapper(object):
         self.title = title
         self.obj = obj
 
-    def __format__(self, fmt):
+    def __unicode__(self):
         if isinstance(self.obj, bool):
             if self.obj:
                 return self.title.title()
-        return self.obj.__format__(fmt)
+        return unicode(self.obj)
 
 
 def format_all(format_string, env):

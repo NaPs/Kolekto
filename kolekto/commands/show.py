@@ -1,6 +1,6 @@
 from kolekto.commands import Command
 from kolekto.datasources import MovieDatasource
-from kolekto.printer import printer, bold
+from kolekto.printer import printer
 from kolekto.helpers import get_hash
 
 
@@ -19,7 +19,7 @@ def show(movie):
             value = value[0]
         else:
             other = []
-        printer.p('{key}: {value}', key=bold(key), value=value)
+        printer.p('<b>{key}</b>: {value}', key=key, value=value)
         for value in other:
             printer.p('{pad}{value}', value=value, pad=' ' * (len(key) + 2))
 

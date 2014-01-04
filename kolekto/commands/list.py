@@ -1,5 +1,5 @@
 from kolekto.commands import Command
-from kolekto.printer import printer, bold, highlight_white
+from kolekto.printer import printer
 
 
 class List(Command):
@@ -13,6 +13,6 @@ class List(Command):
         mdb = self.get_metadata_db(args.tree)
         movies = sorted(mdb.itermovies(), key=lambda x: (x[1].get('title'), x[1].get('year')))
         for movie_hash, movie in movies:
-            printer.p(u'{hash} {movie}',
-                      hash=highlight_white(' ' + movie_hash + ' '),
+            printer.p(u'<inv><b> {hash} </b></inv> {movie}',
+                      hash=movie_hash,
                       movie=unicode(movie))

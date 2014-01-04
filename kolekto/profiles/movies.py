@@ -2,7 +2,6 @@ import unicodedata
 import re
 
 from . import Profile
-from ..printer import bold
 
 
 class Movie(dict):
@@ -29,8 +28,8 @@ class Movie(dict):
                 directors += self['directors'][0]
         else:
             directors = ''
-        fmt = u'{title} ({year}){directors}'
-        return fmt.format(title=bold(self.get('title', 'No title')),
+        fmt = u'<b>{title}</b> ({year}){directors}'
+        return fmt.format(title=self.get('title', 'No title'),
                           year=self.get('year', 'Unknown'),
                           directors=directors)
 
