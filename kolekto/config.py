@@ -47,11 +47,21 @@ class DatasourceKolektoConfig(Section):
              'allow_unknown': True}
 
 
+class ListingKolektoConfig(Section):
+
+    _meta = {'args': Value(String()),
+             'unique': True,
+             'repeat': (0, None)}
+
+    pattern = Value(String())
+
+
 class RootKolektoConfig(Section):
 
     profile = Value(Profile(), default=('movies', Movies))
     view = ViewKolektoConfig()
     datasource = DatasourceKolektoConfig()
+    listing = ListingKolektoConfig()
 
 
 def parse_config(filename):
