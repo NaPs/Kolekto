@@ -54,6 +54,7 @@ class ListingKolektoConfig(Section):
              'repeat': (0, None)}
 
     pattern = Value(String())
+    order = List(String(), default=['title', 'year'])
 
 
 class RootKolektoConfig(Section):

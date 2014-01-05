@@ -5,6 +5,7 @@ from kolekto.pattern import parse_pattern
 
 
 DEFAULT_PATTERN = u'<b>{title}</b> ({year|"unknown"}) by {directors}'
+DEFAULT_ORDER = ('title', 'year')
 
 
 class ListingFormatWrapper(object):
@@ -51,16 +52,19 @@ class List(Command):
         listing = listings.get(args.listing)
         if listing is None:
             if args.listing == u'default':
-                return {'pattern': DEFAULT_PATTERN}
+                return {'pattern': DEFAULT_PATTERN, 'order': DEFAULT_ORDER}
             else:
                 raise KolektoRuntimeError('Unknown listing %r' % args.listing)
         else:
-            return {'pattern': listing.get('pattern')}
+            return {'pattern': listing.get('pattern'),
+                    'order': listing.get('order')}
 
     def run(self, args, config):
         mdb = self.get_metadata_db(args.tree)
         listing = self._config(args, config)
-        movies = sorted(mdb.itermovies(), key=lambda x: (x[1].get('title'), x[1].get('year')))
+        def _sorter((movie_hash, movie)):
+            return tuple(movie.get(x) for x in listing['order'])
+        movies = sorted(mdb.itermovies(), key=_sorter)
         # Get the current used listing:
         for movie_hash, movie in movies:
             prepared_env = parse_pattern(listing['pattern'], movie, ListingFormatWrapper)
