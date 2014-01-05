@@ -1,7 +1,6 @@
 import re
 import os
 import json
-from glob import glob
 from hashlib import sha1
 from tempfile import NamedTemporaryFile
 
@@ -107,10 +106,9 @@ class BaseImport(Command):
         # Load informations from db:
         mds = MovieDatasource(config.subsections('datasource'), args.tree, self.profile.object_class)
 
-        for pattern in args.file:
-            for filename in glob(pattern):
-                filename = filename.decode('utf8')
-                self._import(mdb, mds, args, config, filename)
+        for filename in args.file:
+            filename = filename.decode('utf8')
+            self._import(mdb, mds, args, config, filename)
 
     def _import(self):
         raise NotImplementedError()
