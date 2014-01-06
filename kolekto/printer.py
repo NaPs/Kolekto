@@ -115,6 +115,12 @@ class ProgressContext(object):
         self.pbar.finish()
 
 
+def option(option, text, **kwargs):
+    """ Simple shortcut to construct an option for the KolektoPrinter.choices method.
+    """
+    return option, text, kwargs
+
+
 class KolektoPrinter(object):
 
     """ Handle print and user interactions.
@@ -180,8 +186,8 @@ class KolektoPrinter(object):
         self._print(*args, **kwargs)
 
     def choice(self, choices):
-        for i, (choice, text) in enumerate(choices):
-            self.p(u'[{indice}] {text}', indice=i + 1, text=text)
+        for i, (option, text, args) in enumerate(choices):
+            self.p(u'[{indice}] ' + text, indice=i + 1, **args)
         self.p('')
         while True:
             chosen = raw_input('Choice [1-{0}]? '.format(len(choices)))

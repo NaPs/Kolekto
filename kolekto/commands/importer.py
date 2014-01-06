@@ -4,7 +4,7 @@ import json
 from hashlib import sha1
 from tempfile import NamedTemporaryFile
 
-from kolekto.printer import printer
+from kolekto.printer import printer, option
 from kolekto.commands import Command
 from kolekto.commands.show import show
 from kolekto.datasources import MovieDatasource
@@ -194,16 +194,16 @@ class ImportMovies(BaseImport):
             else:
                 directors = ''
             fmt = u'<b>{title}</b> ({year}){directors} [{datasource}]'
-            choices.append(((datasource, movie), fmt.format(title=movie['title'],
+            choices.append(option((datasource, movie), fmt, title=movie['title'],
                                                             year=movie.get('year', 'Unknown'),
                                                             directors=directors,
-                                                            datasource=datasource.name)))
+                                                            datasource=datasource.name))
 
         if not choices:
             printer.p('No results to display for the file: {fn}', fn=filename)
             return None, None
 
-        choices.append((('manual', None), 'Enter manually informations'))
-        choices.append((('abort', None), 'None of these'))
+        choices.append(option(('manual', None), 'Enter manually informations'))
+        choices.append(option(('abort', None), 'None of these'))
         printer.p('Please choose the relevant movie for the file: {fn}', fn=filename, end='\n\n')
         return printer.choice(choices)
