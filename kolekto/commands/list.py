@@ -2,6 +2,7 @@ from kolekto.commands import Command
 from kolekto.printer import printer
 from kolekto.exceptions import KolektoRuntimeError
 from kolekto.pattern import parse_pattern
+from kolekto.datasources import MovieDatasource
 
 
 DEFAULT_PATTERN = u'<b>{title}</b> ({year|"unknown"}) by {directors}'
@@ -61,11 +62,13 @@ class List(Command):
 
     def run(self, args, config):
         mdb = self.get_metadata_db(args.tree)
+        mds = MovieDatasource(config.subsections('datasource'), args.tree, self.profile.object_class)
         listing = self._config(args, config)
         def _sorter((movie_hash, movie)):
             return tuple(movie.get(x) for x in listing['order'])
         movies = sorted(mdb.itermovies(), key=_sorter)
         # Get the current used listing:
         for movie_hash, movie in movies:
+            movie = mds.attach(movie_hash, movie)
             prepared_env = parse_pattern(listing['pattern'], movie, ListingFormatWrapper)
             printer.p(u'<inv><b> {hash} </b></inv> ' + listing['pattern'], hash=movie_hash, **prepared_env)
