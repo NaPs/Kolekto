@@ -3,10 +3,10 @@
 
 import pkg_resources
 
-from dotconf import Dotconf
-from dotconf.schema import ValidationError
-from dotconf.schema.containers import Section, Value, List
-from dotconf.schema.types import String
+from confiture import Confiture
+from confiture.schema import ValidationError
+from confiture.schema.containers import Section, Value, List
+from confiture.schema.types import String
 
 from .profiles.movies import Movies
 
@@ -66,5 +66,5 @@ class RootKolektoConfig(Section):
 
 
 def parse_config(filename):
-    conf = Dotconf.from_filename(filename, schema=RootKolektoConfig())
+    conf = Confiture.from_filename(filename, schema=RootKolektoConfig())
     return conf.parse()

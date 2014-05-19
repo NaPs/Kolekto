@@ -3,8 +3,8 @@
 
 import pkg_resources
 
-from dotconf.schema.containers import Section, Value
-from dotconf.schema.types import String
+from confiture.schema.containers import Section, Value
+from confiture.schema.types import String
 
 from ..exceptions import KolektoRuntimeError
 

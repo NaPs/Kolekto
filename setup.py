@@ -48,4 +48,4 @@ setup(name='kolekto',
                                             'mediainfos = kolekto.datasources.mediainfos:MediainfosDatasource',
                                             'rewrite = kolekto.datasources.rewrite:RewriteDatasource'],
                     'kolekto.profiles': ['movies = kolekto.profiles.movies:Movies']},
-      install_requires=['dotconf', 'kaa-metadata', 'progressbar', 'requests', 'lxml'])
+      install_requires=['confiture', 'kaa-metadata', 'progressbar', 'requests', 'lxml'])

@@ -14,7 +14,7 @@ Package: python-kolekto
 Architecture: all
 Depends: ${misc:Depends},
          ${python:Depends},
-         python-dotconf,
+         python-confiture,
          python-kaa-metadata,
          python-progressbar,
          python-requests,

@@ -2,8 +2,8 @@ import re
 
 from kolekto.datasources import Datasource, DefaultDatasourceSchema
 
-from dotconf.schema.containers import Value, Section, many
-from dotconf.schema.types import String, Boolean
+from confiture.schema.containers import Value, Section, many
+from confiture.schema.types import String, Boolean
 
 
 class LazyEval(String):

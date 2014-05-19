@@ -10,8 +10,8 @@ from kolekto.printer import printer
 from kolekto.datasources import Datasource, DefaultDatasourceSchema
 from kolekto.exceptions import KolektoRuntimeError
 
-from dotconf.schema.containers import Value
-from dotconf.schema.types import String, Integer
+from confiture.schema.containers import Value
+from confiture.schema.types import String, Integer
 
 
 requests_session = requests.Session()
