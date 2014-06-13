@@ -3,95 +3,147 @@ import subprocess
 import tempfile
 
 import progressbar
-from lxml import etree
 
 
-COLORS = {'black': (30, 40),
-          'red': (31, 41),
-          'green': (32, 42),
-          'yellow': (33, 43),
-          'blue': (34, 44),
-          'magenta': (35, 45),
-          'cyan': (36, 46),
-          'light_gray': (37, 47),
-          'dark_gray': (90, 100),
-          'light_red': (91, 101),
-          'light_green': (92, 102),
-          'light_yellow': (93, 103),
-          'light_blue': (94, 104),
-          'light_magenta': (95, 105),
-          'light_cyan': (96, 106),
-          'white': (97, 107)}
+DEFAULT_TAGS = {'b': (lambda **attrs: '\x1b[1m',
+                      lambda: '\x1b[21m'),
+                'inv': (lambda **attrs: '\x1b[37;7m',
+                        lambda :'\x1b[27;39m'),
+                'dim': (lambda **attrs: '\x1b[2m',
+                        lambda: '\x1b[22m'),
+                'u': (lambda **attrs: '\x1b[4m',
+                      lambda: '\x1b[24m'),
+                '_reset': (None, lambda: '\x1b[0m')}
+
+
+class ColorHandler(object):
+
+    COLOR_CODE = '\x1b[%dm'
+    COLOR_RESET_FG = 39
+    COLOR_RESET_BG = 49
+
+    COLORS = {'black': (30, 40),
+              'red': (31, 41),
+              'green': (32, 42),
+              'yellow': (33, 43),
+              'blue': (34, 44),
+              'magenta': (35, 45),
+              'cyan': (36, 46),
+              'light_gray': (37, 47),
+              'dark_gray': (90, 100),
+              'light_red': (91, 101),
+              'light_green': (92, 102),
+              'light_yellow': (93, 103),
+              'light_blue': (94, 104),
+              'light_magenta': (95, 105),
+              'light_cyan': (96, 106),
+              'white': (97, 107)}
+
+    def __init__(self):
+        self._last_colors = []
+
+    def open(self, **attrs):
+        fg = self.COLORS.get(attrs.get('fg'), [None, None])[0]
+        bg = self.COLORS.get(attrs.get('bg'), [None, None])[1]
+        self._last_colors.append((fg, bg))
+        output = ''
+        if fg is not None:
+            output += self.COLOR_CODE % fg
+        if bg is not None:
+            output += self.COLOR_CODE % bg
+        return output
+
+    def close(self):
+        if self._last_colors:
+            self._last_colors.pop()  # Remove colors from our opening tag
+            if self._last_colors:
+                last_fg, last_bg = self._last_colors[-1]
+            else:
+                last_fg, last_bg = [None, None]
+            if last_fg is None:
+                last_fg = self.COLOR_RESET_FG
+            if last_bg is None:
+                last_bg = self.COLOR_RESET_BG
+            output = ''
+            output += self.COLOR_CODE % last_fg
+            output += self.COLOR_CODE % last_bg
+            return output
+        else:
+            return ''
 
 
 class ConsoleFormatter(object):
 
-    """ Convert an XML markup to VT100 control codes.
+    """ Convert an XML-Like markup to VT100 control codes.
     """
 
-    def __init__(self, root_elem):
-        self.text = ''
-        self._last_color_fg = 39  # Default color
-        self._last_color_bg = 49  # Default background
-        self._parse(root_elem)
+    def __init__(self, tags={}, reset=None):
+        self.tags = tags
+        self.reset = reset
 
-    @classmethod
-    def from_text(cls, text):
-        return cls(etree.fromstring('<root>%s</root>' % text))
+    def parse(self, text):
+        output = ''
+        open_tags = []
+        for token_type, raw_text, tag_name, attrs in self._lexer(text):
+            if token_type == 'text':
+                output += raw_text
+            elif token_type == 'open':
+                open_tags.append(tag_name)
+                output += self.tags[tag_name][0](**attrs)
+            elif token_type == 'close':
+                # Close the actually closed tag, and any other tag opened
+                # after and not closed:
+                while open_tags:
+                    closing_tag = open_tags.pop()
+                    output += self.tags[closing_tag][1]()
+                    if closing_tag == tag_name:
+                        break
+        output += self.tags.get('_reset', lambda: '')[1]()
+        return output
 
-    def append(self, text):
-        self.text += text
+    def _lexer(self, data):
+        while data:
+            start = data.find('<')
+            if start != -1:
+                # Found data before a starting tag
+                if start:
+                    yield 'text', data[:start], None, None
+                    data = data[start:]
+                end = data.find('>')
+                recheck = data.find('<', 1)
+                if recheck > 0 and recheck < end:
+                    yield 'text', data[:recheck], None, None
+                    data = data[recheck:]
+                elif end > 0:
+                    tag = data[1:end]
+                    # Parse a tag
+                    if tag[0] == '/':
+                        token_type = 'close'
+                        tag = tag[1:]
+                    else:
+                        token_type = 'open'
 
-    def _parse(self, elem):
-        if elem.text is not None:
-            self.append(elem.text)
+                    tag_components = tag.split()
+                    if tag_components and tag_components[0] in self.tags:
+                        tag_name = tag_components[0]
+                        opts = {}
+                        for cmpt in tag_components[1:]:
+                            if '=' in cmpt:
+                                key, value = cmpt.split('=', 1)
+                                opts[key] = value
+                            else:
+                                opts[cmpt] = True
+                        yield token_type, data[:end + 1], tag_name, opts
+                    else:
+                        yield 'text', data[:end + 1], None, None
 
-        for child in elem:
-            func = getattr(self, 'tag_' + child.tag)
-            func(child)
-            if child.tail is not None:
-                self.text += child.tail
-
-    #
-    # Tags definition
-    #
-
-    def tag_color(self, elem):
-        fg = COLORS.get(elem.get('fg'), [None, None])[0]
-        bg = COLORS.get(elem.get('bg'), [None, None])[1]
-        last_fg = self._last_color_fg
-        last_bg = self._last_color_bg
-        if fg is not None:
-            self._last_color_fg = fg
-            self.append('\x1b[%dm' % fg)
-        if bg is not None:
-            self._last_color_bg = bg
-            self.append('\x1b[%dm' % bg)
-        self._parse(elem)
-        if fg is not None:
-            self.append('\x1b[%dm' % last_fg)
-        if bg is not None:
-            self.append('\x1b[%dm' % last_bg)
-
-    def tag_b(self, elem):
-        self.append('\x1b[1m')
-        self._parse(elem)
-        self.append('\x1b[21m')
-
-    def tag_inv(self, elem):
-        self.append('\x1b[37;7m')
-        self._parse(elem)
-        self.append('\x1b[27;39m')
-
-    def tag_dim(self, elem):
-        self.append('\x1b[2m')
-        self._parse(elem)
-        self.append('\x1b[22m')
-
-    def tag_u(self, elem):
-        self.append('\x1b[4m')
-        self._parse(elem)
-        self.append('\x1b[24m')
+                    data = data[end + 1:]
+                else:
+                    break
+            else:
+                break
+        if data:
+            yield 'text', data, None, None
 
 
 class ProgressContext(object):
@@ -142,6 +194,10 @@ class KolektoPrinter(object):
         self._debug = debug
         self._encoding = encoding
         self._editor = editor
+        tags = DEFAULT_TAGS.copy()
+        color_handler = ColorHandler()
+        tags['color'] = (color_handler.open, color_handler.close)
+        self.formatter = ConsoleFormatter(tags)
 
     @property
     def output(self):
@@ -152,10 +208,9 @@ class KolektoPrinter(object):
         end = kwargs.pop('end', u'\n')
         err = kwargs.pop('err', False)
         markup = kwargs.pop('markup', True)
-        kwargs = dict((k, u'<![CDATA[%s]]>' % v) for k, v in kwargs.iteritems())
         text = sep.join(unicode(x) for x in args).format(**kwargs) + end
         if markup:
-            text = ConsoleFormatter.from_text(text).text
+            text = self.formatter.parse(text)
         if err:
             self._err.write(text.encode(self._encoding))
         else:
