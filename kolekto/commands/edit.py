@@ -32,7 +32,7 @@ class Edit(Command):
             movie_json = printer.edit(movie_json)
 
             try:
-                mdb.save(movie_hash, json.loads(movie))
+                mdb.save(movie_hash, json.loads(movie_json))
             except ValueError:
                 if printer.ask('Bad json data, would you like to try again?', default=True):
                     continue
