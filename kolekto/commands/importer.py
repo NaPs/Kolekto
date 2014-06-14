@@ -203,7 +203,7 @@ class ImportMovies(BaseImport):
             printer.p('No results to display for the file: {fn}', fn=filename)
             return None, None
 
-        choices.append(option(('manual', None), 'Enter manually informations'))
+        choices.append(option(('manual', None), 'Enter information manually'))
         choices.append(option(('abort', None), 'None of these'))
         printer.p('Please choose the relevant movie for the file: {fn}', fn=filename, end='\n\n')
         return printer.choice(choices)
