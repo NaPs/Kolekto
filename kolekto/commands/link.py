@@ -109,11 +109,29 @@ class Link(Command):
                   rem=len(links_to_delete),
                   add=len(links_to_create))
 
+        dirs_to_cleanup = set()
+
         # Delete the old links:
         for filename, link in links_to_delete:
             printer.verbose('Deleting {file}', file=filename)
             if not args.dry_run:
                 os.remove(os.path.join(args.tree, filename))
+            while filename:
+                filename = os.path.split(filename)[0]
+                dirs_to_cleanup.add(filename)
+
+        dirs_to_cleanup.discard('')  # Avoid to delete view roots
+
+        # Delete empty directories:
+        for directory in dirs_to_cleanup:
+            if not args.dry_run:
+                try:
+                    os.rmdir(os.path.join(args.tree, directory))
+                except OSError, err:
+                    if err.errno != 39:  # Ignore "Directory not empty" error
+                        raise
+                else:
+                    printer.verbose('Deleted directory {dir}', dir=directory)
 
         # Create the new links:
         for filename, link in links_to_create:
