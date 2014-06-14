@@ -79,7 +79,6 @@ class BaseImport(Command):
     """ Base class for importers.
     """
 
-
     def prepare(self):
         self.add_arg('file', nargs='+', help='Files to import (globbing allowed)')
         self.add_arg('--hardlink', action='store_true', default=False,
