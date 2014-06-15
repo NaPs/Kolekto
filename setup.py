@@ -5,15 +5,10 @@ version = '1.3~dev'
 
 base = os.path.dirname(__file__)
 
-readme = open(os.path.join(base, 'README.rst')).read()
-changelog = open(os.path.join(base, 'CHANGELOG.rst')).read()
-todo = open(os.path.join(base, 'TODO.rst')).read()
-
-
 setup(name='kolekto',
       version=version,
       description='A really KISS movie catalog software',
-      long_description=readme + '\n' + changelog + '\n' + todo,
+      long_description=open(os.path.join(base, 'README.rst')).read(),
       classifiers=['Development Status :: 4 - Beta',
                    'License :: OSI Approved :: MIT License',
                    'Operating System :: OS Independent'],
