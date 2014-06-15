@@ -29,11 +29,11 @@ The fastest and more common way to install Kolekto is using pip::
 Debian
 ~~~~~~
 
-If you use Debian Wheezy, you can also use the Tecknet repositories. Add theses
+If you use Debian Sid, you can also use the Tecknet repositories. Add theses
 lines in your ``/etc/apt/source.list`` file::
 
-    deb http://debian.tecknet.org/debian wheezy tecknet
-    deb-src http://debian.tecknet.org/debian wheezy tecknet
+    deb http://debian.tecknet.org/debian sid tecknet
+    deb-src http://debian.tecknet.org/debian sid tecknet
 
 Add the Tecknet repositories key in your keyring:
 
