@@ -171,8 +171,20 @@ You can use the ``--help`` option to see all available commands.
 Changelog
 ---------
 
-v1.3 (not yet released)
-~~~~~~~~~~~~~~~~~~~~~~~
+v1.3 released on 15/06/2014
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Added new markup based text formatting
+- Better cleaning of titles before to search
+- Added rewrite datasource
+- Added configurable listings
+- Added cache on mediainfos datasource
+- Now use Configure instead of Dotconf (project has been renamed)
+- Now cleanup empty directories on link
+- Now show quamity on output of find-duplicates
+- Removed debian packaging from upstream repository
+- Removed globbing feature of importer command (let shell do its work)
+- Fixed edit command
 
 v1.2 released on 09/12/2013
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
