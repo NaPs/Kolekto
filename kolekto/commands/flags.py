@@ -10,34 +10,35 @@ class FlagCommand(Command):
     unflag_unset_flags = []  # Flags to unset when this flag is unset
 
     def prepare(self):
-        self.add_arg('input', metavar='movie-hash-or-file')
+        self.add_arg('input', metavar='movie-hash-or-file', nargs='+')
         self.add_arg('--unflag', '-u', action='store_true', default=False)
 
     def run(self, args, config):
         mdb = self.get_metadata_db(args.tree)
 
-        movie_hash = get_hash(args.input)
+        for movie_input in args.input:
+            movie_hash = get_hash(movie_input)
 
-        try:
-            movie = mdb.get(movie_hash)
-        except KeyError:
-            printer.p('Unknown movie hash.')
-            return
-        if args.unflag:
-            for flag in self.unflag_unset_flags:
-                try:
-                    del movie[flag]
-                except KeyError:
-                    pass
-        else:
-            for flag in self.flags:
-                movie[flag] = True
-            for flag in self.unset_flags:
-                try:
-                    del movie[flag]
-                except KeyError:
-                    pass
-        mdb.save(movie_hash, movie)
+            try:
+                movie = mdb.get(movie_hash)
+            except KeyError:
+                printer.p('Unknown movie hash.')
+                return
+            if args.unflag:
+                for flag in self.unflag_unset_flags:
+                    try:
+                        del movie[flag]
+                    except KeyError:
+                        pass
+            else:
+                for flag in self.flags:
+                    movie[flag] = True
+                for flag in self.unset_flags:
+                    try:
+                        del movie[flag]
+                    except KeyError:
+                        pass
+            mdb.save(movie_hash, movie)
 
 
 class Watch(FlagCommand):
