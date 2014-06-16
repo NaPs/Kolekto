@@ -171,6 +171,9 @@ You can use the ``--help`` option to see all available commands.
 Changelog
 ---------
 
+v1.4 (not yet released)
+~~~~~~~~~~~~~~~~~~~~~~~
+
 v1.3 released on 15/06/2014
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
