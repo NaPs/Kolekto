@@ -9,6 +9,7 @@ from kolekto.commands import Command
 from kolekto.commands.show import show
 from kolekto.datasources import MovieDatasource
 from kolekto.exceptions import KolektoRuntimeError
+from kolekto.db import AttachmentStore
 
 
 def clean_title(title):
@@ -74,6 +75,19 @@ def link(tree, source_filename, symlink=False):
     return filehash.hexdigest()
 
 
+def list_attachments(fullname):
+    """ List attachment for the specified fullname.
+    """
+    parent, filename = os.path.split(fullname)
+    filename_without_ext, ext = os.path.splitext(filename)
+    attachments = []
+    for found_filename in os.listdir(parent):
+        found_filename_without_ext, _ = os.path.splitext(found_filename)
+        if filename_without_ext == found_filename_without_ext and found_filename != filename:
+            attachments.append(os.path.join(parent, found_filename))
+    return attachments
+
+
 class BaseImport(Command):
 
     """ Base class for importers.
@@ -91,6 +105,9 @@ class BaseImport(Command):
                      help='Show all informations about imported movie.')
         self.add_arg('--delete', action='store_true', default=False,
                      help='Delete imported file after a successful import')
+        self.add_arg('--dont-import-attachments', dest='import_attachments',
+                     action='store_false', default=True,
+                     help='Don\'t import the attachments')
 
     def run(self, args, config):
         # Check the args:
@@ -105,9 +122,23 @@ class BaseImport(Command):
         # Load informations from db:
         mds = MovieDatasource(config.subsections('datasource'), args.tree, self.profile.object_class)
 
+        attachment_store = AttachmentStore(os.path.join(args.tree, '.kolekto', 'attachments'))
+
         for filename in args.file:
             filename = filename.decode('utf8')
-            self._import(mdb, mds, args, config, filename)
+            movie_hash = self._import(mdb, mds, args, config, filename)
+
+            # Import the attachments
+            if movie_hash is not None and args.import_attachments:
+                attachments = list_attachments(filename)
+                if attachments:
+                    printer.p('Found {nb} attachment(s) for this movie:', nb=len(attachments))
+                    for attach in attachments:
+                        printer.p(' - {filename}', filename=attach)
+                    if not args.auto and printer.ask('Import them?', default=True):
+                        for attach in attachments:
+                            _, ext = os.path.splitext(attach)
+                            attachment_store.store(movie_hash, ext.lstrip('.'), open(attach))
 
     def _import(self):
         raise NotImplementedError()
@@ -172,6 +203,8 @@ class ImportMovies(BaseImport):
         if args.delete:
             os.unlink(filename)
             printer.debug('Deleted original file {filename}', filename=filename)
+
+        return movie_hash
 
     def _search(self, mdb, query, filename, year=None, auto=False):
         """ Search the movie using all available datasources and let the user
