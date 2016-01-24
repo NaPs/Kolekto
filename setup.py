@@ -43,5 +43,6 @@ setup(name='kolekto',
                                             'tmdb_proxy = kolekto.datasources.tmdb:TmdbProxyDatasource',
                                             'mediainfos = kolekto.datasources.mediainfos:MediainfosDatasource',
                                             'rewrite = kolekto.datasources.rewrite:RewriteDatasource'],
-                    'kolekto.profiles': ['movies = kolekto.profiles.movies:Movies']},
+                    'kolekto.profiles': ['movies = kolekto.profiles.movies:Movies',
+                                         'tvseries = kolekto.profiles.series:TVSeries']},
       install_requires=['confiture', 'kaa-metadata', 'progressbar', 'requests', 'lxml'])
