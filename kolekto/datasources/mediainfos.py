@@ -1,8 +1,10 @@
 import os
 import logging
+import datetime
 
 from kolekto.datasources import Datasource
 from kolekto.helpers import JsonDbm
+from kolekto.commands.stats import humanize_filesize
 
 import kaa.metadata
 
@@ -45,6 +47,16 @@ class MediainfosDatasource(Datasource):
 
             # Set the movie length (in minutes)
             media_infos['runtime'] = int(infos['length'] / 60)
+
+            stat = os.stat(filename)
+
+            # Get the file modification time
+            mtime = datetime.datetime.fromtimestamp(stat.st_mtime)
+            media_infos['mtime'] = mtime.strftime('%d/%m/%Y %H:%M:%S')
+
+            # Get the file size
+            media_infos['size'] = humanize_filesize(stat.st_size)
+
             self._cache.save(movie_hash, media_infos)
 
         movie.update(media_infos)
