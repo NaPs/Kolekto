@@ -1,6 +1,7 @@
 import re
 import os
 import json
+import datetime
 from hashlib import sha1
 from tempfile import NamedTemporaryFile
 
@@ -179,6 +180,9 @@ class ImportMovies(BaseImport):
 
         # Refresh the full data for the choosen movie:
         movie = mds.refresh(movie)
+
+        # Append the import date
+        movie['import_date'] = datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 
         if args.show:
             show(movie)
