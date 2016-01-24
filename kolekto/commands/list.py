@@ -5,10 +5,6 @@ from kolekto.pattern import parse_pattern
 from kolekto.datasources import MovieDatasource
 
 
-DEFAULT_PATTERN = u'<b>{title}</b> ({year|"unknown"}) by {directors}'
-DEFAULT_ORDER = ('title', 'year')
-
-
 class ListingFormatWrapper(object):
 
     """ A wrapper used to customize how movies attributes are formatted.
@@ -53,7 +49,8 @@ class List(Command):
         listing = listings.get(args.listing)
         if listing is None:
             if args.listing == u'default':
-                return {'pattern': DEFAULT_PATTERN, 'order': DEFAULT_ORDER}
+                return {'pattern': self._profile.list_default_pattern,
+                        'order': self._profile.list_default_order}
             else:
                 raise KolektoRuntimeError('Unknown listing %r' % args.listing)
         else:

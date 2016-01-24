@@ -40,3 +40,5 @@ class Movies(Profile):
     """
 
     object_class = Movie
+    list_default_pattern = u'<b>{title}</b> ({year|"unknown"}) by {directors}'
+    list_default_order = ('title', 'year')
