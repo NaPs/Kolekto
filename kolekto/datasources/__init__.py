@@ -30,7 +30,7 @@ class Datasource(object):
         self.config = config
         self.object_class = object_class
 
-    def search(self, title, year=None):
+    def search(self, title, **kwargs):
         """ Search for a movie title in database.
 
         :return: a list of Movie object
