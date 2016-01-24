@@ -48,6 +48,11 @@ class MediainfosDatasource(Datasource):
             # Set the movie length (in minutes)
             media_infos['runtime'] = int(infos['length'] / 60)
 
+            # Get audio languages
+            languages = list(set(x['language'] for x in infos['audio'] if x['language']))
+            if languages:
+                media_infos['audio_languages'] = languages
+
             stat = os.stat(filename)
 
             # Get the file modification time
