@@ -62,7 +62,7 @@ def search():
                 cast = get_on_tmdb(u'/movie/%s/casts' % movie['id'])
                 year = datetime.strptime(movie['release_date'], '%Y-%m-%d').year if movie['release_date'] else None
                 movies.append({'title': movie['original_title'],
-                               'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
+                               'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing' and x['job'] == 'Director'],
                                'year': year,
                                '_tmdb_id': movie['id']})
         except requests.HTTPError as err:
@@ -89,7 +89,7 @@ def get_movie(tmdb_id):
             return Response('TMDB API error: %s' % str(err), status=err.response.status_code)
         movie = {'title': details['original_title'],
                  'score': details['popularity'],
-                 'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
+                 'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing' and x['job'] == 'Director'],
                  'writers': [x['name'] for x in cast['crew'] if x['department'] == 'Writing'],
                  'cast': [x['name'] for x in cast['cast']],
                  'genres': [x['name'] for x in details['genres']],

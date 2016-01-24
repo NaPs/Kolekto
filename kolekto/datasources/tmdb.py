@@ -88,7 +88,7 @@ class TmdbDatasource(Datasource):
             # Else, format and yield the movie:
             cast = self._tmdb_cast(result['id'])
             movie = self.object_class({'title': result['original_title'],
-                                       'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
+                                       'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing' and x['job'] == 'Director'],
                                        '_datasource': self.name,
                                        '_tmdb_id': result['id']})
             if movie_year:
@@ -108,7 +108,7 @@ class TmdbDatasource(Datasource):
             alternatives = self._tmdb_alt(tmdb_id)
             refreshed = self.object_class({'title': details['original_title'],
                                            'score': details['popularity'],
-                                           'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing'],
+                                           'directors': [x['name'] for x in cast['crew'] if x['department'] == 'Directing' and x['job'] == 'Director'],
                                            'writers': [x['name'] for x in cast['crew'] if x['department'] == 'Writing'],
                                            'cast': [x['name'] for x in cast['cast']],
                                            'genres': [x['name'] for x in details['genres']],
