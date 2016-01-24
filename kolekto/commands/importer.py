@@ -24,6 +24,15 @@ def clean_title(title):
         return year, title
 
 
+def clean_title_series(title):
+    title = re.sub('[._-]', ' ', title).strip().title()
+    match = re.match('(.+?) S(\d+)E(\d+)', title)
+    if match is None:
+        return title, None, None
+    else:
+        return match.group(1), int(match.group(2)), int(match.group(3))
+
+
 def copy(tree, source_filename):
     """ Copy file in tree, show a progress bar during operations,
         and return the sha1 sum of copied file.
@@ -242,4 +251,67 @@ class ImportMovies(BaseImport):
         choices.append(option(('manual', None), 'Enter information manually'))
         choices.append(option(('abort', None), 'None of these'))
         printer.p('Please choose the relevant movie for the file: {fn}', fn=filename, end='\n\n')
+        return printer.choice(choices)
+
+
+class ImportTvSeries(BaseImport):
+
+    """ Import TV Series into the Kolekto tree.
+    """
+
+    help = 'import a tv series episode'
+
+    def _import(self, mdb, mds, args, config, filename):
+        printer.debug('Importing file {filename}', filename=filename)
+        short_filename = os.path.basename(filename)
+        title, ext = os.path.splitext(short_filename)
+
+        title, season_num, episode_num = clean_title_series(title)
+
+        while True:
+            # Disable the title input if auto mode is enabled:
+            if not args.auto:
+                title = printer.input(u'Title to search', default=title)
+                season_num = int(printer.input(u'Season number', default=season_num))
+                episode_num = int(printer.input(u'Episode number', default=episode_num))
+            datasource, episode = self._search(mds, title, short_filename, season_num, episode_num, auto=args.auto)
+            if datasource == 'manual':
+                episode = self.profile.object_class()
+            elif datasource == 'abort':
+                printer.p('Aborted import of {filename}', filename=filename)
+                return
+            break
+
+        if datasource is None:
+            return
+
+        return episode
+
+        # Refresh the full data for the choosen movie:
+        episode = mds.refresh(episode)
+
+    def _search(self, mdb, query, filename, season_num, episode_num, auto=False):
+        """ Search the movie using all available datasources and let the user
+            select a result. Return the choosen datasource and produced movie dict.
+
+        If auto is enabled, directly returns the first movie found.
+        """
+        choices = []
+        for datasource, movie in mdb.search(query, season=season_num, episode=episode_num):
+            if auto:
+                return datasource, movie
+            fmt = u'<b>{title}</b> - <b>{ep}</b> S{season:02d}E{episode:02d} [{datasource}]'
+            choices.append(option((datasource, movie), fmt, title=movie['title'],
+                                                            ep=movie['episode_title'],
+                                                            season=movie['season'],
+                                                            episode=movie['episode'],
+                                                            datasource=datasource.name))
+
+        if not choices:
+            printer.p('No results to display for the file: {fn}', fn=filename)
+            return None, None
+
+        choices.append(option(('manual', None), 'Enter information manually'))
+        choices.append(option(('abort', None), 'None of these'))
+        printer.p('Please choose the relevant result for the file: {fn}', fn=filename, end='\n\n')
         return printer.choice(choices)
