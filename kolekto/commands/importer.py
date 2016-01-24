@@ -127,7 +127,37 @@ class BaseImport(Command):
 
         for filename in args.file:
             filename = filename.decode('utf8')
-            movie_hash = self._import(mdb, mds, args, config, filename)
+            movie = self._import(mdb, mds, args, config, filename)
+
+            # Refresh the full data for the choosen movie:
+            movie = mds.refresh(movie)
+
+            # Append the import date
+            movie['import_date'] = datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+
+            if args.show:
+                show(movie)
+                printer.p('')
+
+            # Edit available data:
+            if not args.auto and printer.ask('Do you want to edit the movie metadata', default=False):
+                movie = self.profile.object_class(json.loads(printer.edit(json.dumps(movie, indent=True))))
+
+            # Hardlink or copy the movie in the tree
+            if args.hardlink or args.symlink:
+                printer.p('\nComputing movie sha1sum...')
+                movie_hash = link(args.tree, filename, args.symlink)
+            else:
+                printer.p('\nCopying movie in kolekto tree...')
+                movie_hash = copy(args.tree, filename)
+            printer.p('')
+
+            mdb.save(movie_hash, movie)
+            printer.debug('Movie {hash} saved to the database', hash=movie_hash)
+
+            if args.delete:
+                os.unlink(filename)
+                printer.debug('Deleted original file {filename}', filename=filename)
 
             # Import the attachments
             if movie_hash is not None and args.import_attachments:
@@ -178,37 +208,7 @@ class ImportMovies(BaseImport):
         if datasource is None:
             return
 
-        # Refresh the full data for the choosen movie:
-        movie = mds.refresh(movie)
-
-        # Append the import date
-        movie['import_date'] = datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-
-        if args.show:
-            show(movie)
-            printer.p('')
-
-        # Edit available data:
-        if not args.auto and printer.ask('Do you want to edit the movie metadata', default=False):
-            movie = self.profile.object_class(json.loads(printer.edit(json.dumps(movie, indent=True))))
-
-        # Hardlink or copy the movie in the tree
-        if args.hardlink or args.symlink:
-            printer.p('\nComputing movie sha1sum...')
-            movie_hash = link(args.tree, filename, args.symlink)
-        else:
-            printer.p('\nCopying movie in kolekto tree...')
-            movie_hash = copy(args.tree, filename)
-        printer.p('')
-
-        mdb.save(movie_hash, movie)
-        printer.debug('Movie {hash} saved to the database', hash=movie_hash)
-
-        if args.delete:
-            os.unlink(filename)
-            printer.debug('Deleted original file {filename}', filename=filename)
-
-        return movie_hash
+        return movie
 
     def _search(self, mdb, query, filename, year=None, auto=False):
         """ Search the movie using all available datasources and let the user
